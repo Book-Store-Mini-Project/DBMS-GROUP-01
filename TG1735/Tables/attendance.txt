@@ -1,0 +1,8 @@
+CREATE TABLE Attendance (
+    student_id VARCHAR(15) NOT NULL,
+    session_id INT NOT NULL,
+    status ENUM('present', 'absent', 'medical') NOT NULL,
+    PRIMARY KEY (student_id, session_id),
+    FOREIGN KEY (student_id) REFERENCES Student(student_id),
+    FOREIGN KEY (session_id) REFERENCES Session(session_id)
+);
