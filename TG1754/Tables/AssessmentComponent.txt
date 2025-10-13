@@ -1,0 +1,8 @@
+CREATE TABLE AssessmentComponent (
+    assessment_id INT AUTO_INCREMENT PRIMARY KEY,
+    course_code VARCHAR(10) NOT NULL,
+    name ENUM('quiz 01', 'quiz 02', 'quiz 03', 'mid', 'end_theory', 'end_practical', 'project') NOT NULL,
+    mark INT DEFAULT 100 CHECK (mark >= 0 AND mark <= 100),
+    is_ca BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY (course_code) REFERENCES Course(course_code)
+);
