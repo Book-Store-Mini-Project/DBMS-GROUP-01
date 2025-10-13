@@ -6,3 +6,4 @@ CREATE TABLE Attendance (
     FOREIGN KEY (student_id) REFERENCES Student(student_id),
     FOREIGN KEY (session_id) REFERENCES Session(session_id)
 );
+
