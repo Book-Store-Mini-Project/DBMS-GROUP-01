@@ -16,8 +16,9 @@ CREATE TABLE Course (
 INSERT INTO Course (course_code, name, credits, has_theory, has_practical, lecturer_id, dept_id, semester) VALUES
 ('ENG1212', 'English', 2, TRUE, FALSE, 16, 4, 'Level 1 Semester 2'),                
 ('ICT1212', 'Database Management Systems', 2, TRUE, FALSE, 17, 1, 'Level 1 Semester 2'), 
-('ICT1213', 'Database Management Systems Practicum', 1, FALSE, TRUE, 17, 1, 'Level 1 Semester 2'), 
+('ICT1222', 'Database Management Systems Practicum', 1, FALSE, TRUE, 17, 1, 'Level 1 Semester 2'), 
 ('ICT1233', 'Server-Side Web Development', 3, TRUE, TRUE, 18, 1, 'Level 1 Semester 2'), 
 ('ICT1242', 'Computer Architecture', 2, TRUE, FALSE, 19, 1, 'Level 1 Semester 2'),       
-('TCS1212', 'Management', 2, TRUE, FALSE, 20, 4, 'Level 1 Semester 2'),               
-('TMS1233', 'Discrete Mathematics', 3, TRUE, FALSE, 18, 2, 'Level 1 Semester 2');      
+('TCS1212', 'Management', 2, TRUE, FALSE, 20, 4, 'Level 1 Semester 2'),  
+('ICT1253', 'Computer Networks', 3, TRUE, TRUE, 20, 1, 'Level 1 Semester 2'),               
+('TMS1233', 'Discrete Mathematics', 3, TRUE, FALSE, 18, 2, 'Level 1 Semester 2');
