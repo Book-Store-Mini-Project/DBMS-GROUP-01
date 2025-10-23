@@ -1,8 +1,75 @@
 CREATE TABLE AssessmentComponent (
     assessment_id INT AUTO_INCREMENT PRIMARY KEY,
     course_code VARCHAR(10) NOT NULL,
-    name ENUM('quiz 01', 'quiz 02', 'quiz 03', 'mid', 'end_theory', 'end_practical', 'project') NOT NULL,
+    name ENUM('quiz 01', 'quiz 02', 'quiz 03', 'mid', 'end_theory', 'end_practical', 'project', 'assignment') NOT NULL,
     mark INT DEFAULT 100 CHECK (mark >= 0 AND mark <= 100),
     is_ca BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (course_code) REFERENCES Course(course_code)
 );
+
+
+INSERT INTO AssessmentComponent (course_code, name, mark, is_ca)
+VALUES
+-- ENG1212 - English
+('ENG1212', 'mid', 100, TRUE),
+('ENG1212', 'assignment', 100, TRUE),
+('ENG1212', 'end_theory', 100, FALSE),
+
+-- TCS1212 - Management
+('TCS1212', 'quiz 01', 100, TRUE),
+('TCS1212', 'quiz 02', 100, TRUE),
+('TCS1212', 'quiz 03', 100, TRUE),
+('TCS1212', 'assignment', 100, TRUE),
+('TCS1212', 'mid', 100, TRUE),
+('TCS1212', 'end_theory', 100, FALSE),
+
+-- ICT1212 - Database Management Systems
+('ICT1212', 'quiz 01', 100, TRUE),
+('ICT1212', 'quiz 02', 100, TRUE),
+('ICT1212', 'quiz 03', 100, TRUE),
+('ICT1212', 'assignment', 100, TRUE),
+('ICT1212', 'mid', 100, TRUE),
+('ICT1212', 'end_theory', 100, FALSE),
+
+-- ICT1222 - Database Management Systems Practicum
+('ICT1222', 'quiz 01', 100, TRUE),
+('ICT1222', 'quiz 02', 100, TRUE),
+('ICT1222', 'quiz 03', 100, TRUE),
+('ICT1222', 'assignment', 100, TRUE),
+('ICT1222', 'project', 100, TRUE),
+('ICT1222', 'end_practical', 100, FALSE),
+
+-- TMS1233 - Discrete Mathematics
+('TMS1233', 'quiz 01', 100, TRUE),
+('TMS1233', 'quiz 02', 100, TRUE),
+('TMS1233', 'quiz 03', 100, TRUE),
+('TMS1233', 'mid', 100, TRUE),
+('TMS1233', 'assignment', 100, TRUE),
+('TMS1233', 'end_theory', 100, FALSE),
+
+-- ICT1233 - Computer Networks 
+('ICT1253', 'quiz 01', 100, TRUE),
+('ICT1253', 'quiz 02', 100, TRUE),
+('ICT1253', 'quiz 03', 100, TRUE),
+('ICT1253', 'assignment', 100, TRUE),
+('ICT1253', 'mid', 100, TRUE),
+('ICT1253', 'end_theory', 100, FALSE),
+('ICT1222', 'end_practical', 100, FALSE),
+
+-- ICT1242 - Computer Architecture
+('ICT1242', 'quiz 01', 100, TRUE),
+('ICT1242', 'quiz 02', 100, TRUE),
+('ICT1242', 'quiz 03', 100, TRUE),
+('ICT1242', 'assignment', 100, TRUE),
+('ICT1242', 'mid', 100, TRUE),
+('ICT1242', 'end_theory', 100, FALSE),
+
+-- ICT1233 - Server-Side Web Development
+('ICT1233', 'quiz 01', 100, TRUE),
+('ICT1233', 'quiz 02', 100, TRUE),
+('ICT1233', 'quiz 03', 100, TRUE),
+('ICT1233', 'project', 100, TRUE),
+('ICT1233', 'assignment', 100, TRUE),
+('ICT1233', 'mid', 100, TRUE),
+('ICT1233', 'end_theory', 100, FALSE),
+('ICT1233', 'end_practical', 100, FALSE);

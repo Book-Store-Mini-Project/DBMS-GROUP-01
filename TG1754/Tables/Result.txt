@@ -1,0 +1,11 @@
+CREATE TABLE Result (
+    result_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    course_code VARCHAR(10) NOT NULL,
+    result_date DATE NOT NULL,
+    final_mark FLOAT CHECK (final_mark BETWEEN 0 AND 100),
+    grade VARCHAR(3) NOT NULL,  -- e.g., 'A+', 'MC', 'WH'
+    FOREIGN KEY (student_id) REFERENCES Student(user_id),
+    FOREIGN KEY (course_code) REFERENCES Course(course_code),
+    UNIQUE (student_id, course_code, result_date)
+);
