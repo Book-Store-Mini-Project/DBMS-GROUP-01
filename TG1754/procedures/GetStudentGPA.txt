@@ -1,0 +1,17 @@
+DELIMITER //
+
+CREATE PROCEDURE GetStudentGPA(IN p_registration_number VARCHAR(15))
+BEGIN
+    SELECT 
+        COALESCE(sg.sgpa, 0) AS SGPA,
+        COALESCE(cg.cgpa, 0) AS CGPA,
+        sg.academic_year
+    FROM SGPAVIEW sg
+    JOIN CGPAVIEW cg ON sg.student_registration = cg.student_registration AND sg.academic_year = cg.academic_year
+    WHERE sg.student_registration = p_registration_number
+    ORDER BY sg.academic_year DESC
+    LIMIT 1;
+END;
+//
+
+DELIMITER ;
