@@ -12,7 +12,6 @@ CREATE TABLE Course (
 );
 
 
-
 INSERT INTO Course (course_code, name, credits, has_theory, has_practical, lecturer_id, dept_id, semester) VALUES
 ('ENG1212', 'English', 2, TRUE, FALSE, 16, 4, 'Level 1 Semester 2'),                
 ('ICT1212', 'Database Management Systems', 2, TRUE, FALSE, 17, 1, 'Level 1 Semester 2'), 
