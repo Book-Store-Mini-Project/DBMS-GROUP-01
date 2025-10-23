@@ -1,0 +1,17 @@
+DELIMITER //
+
+CREATE PROCEDURE GetStudentAttendancePercentage(IN p_registration_number VARCHAR(15))
+BEGIN
+    SELECT 
+        ea.registration_no,
+        ea.course_code,
+        c.name AS course_name,
+        COALESCE(ea.attendance_percentage, 0) AS attendance_percentage
+    FROM EligibleAttendanceView ea
+    JOIN Course c ON ea.course_code = c.course_code
+    WHERE ea.registration_no = p_registration_number
+    ORDER BY ea.course_code;
+END;
+//
+
+DELIMITER ;

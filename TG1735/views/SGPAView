@@ -1,0 +1,16 @@
+CREATE OR REPLACE VIEW SGPAView AS
+SELECT
+    s.registration_no AS student_registration,
+    b.academic_year,
+    c.semester AS semester_name,
+    ROUND(
+        SUM(sg.grade_point * c.credits) / SUM(c.credits),
+        2
+    ) AS sgpa
+FROM StudentGrades sg
+JOIN Student s ON sg.student_registration = s.registration_no
+JOIN Batch b ON s.batch_id = b.batch_id
+JOIN Course c ON sg.course_code = c.course_code
+WHERE sg.grade NOT IN ('WH', 'MC', 'Ineligible')
+GROUP BY s.registration_no, b.academic_year, c.semester
+ORDER BY s.registration_no, b.academic_year, c.semester;
