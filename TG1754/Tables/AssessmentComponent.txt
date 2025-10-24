@@ -32,10 +32,7 @@ VALUES
 ('ICT1212', 'end_theory', 100, FALSE),
 
 -- ICT1222 - Database Management Systems Practicum
-('ICT1222', 'quiz 01', 100, TRUE),
-('ICT1222', 'quiz 02', 100, TRUE),
-('ICT1222', 'quiz 03', 100, TRUE),
-('ICT1222', 'assignment', 100, TRUE),
+('ICT1222', 'mid', 100, TRUE),
 ('ICT1222', 'project', 100, TRUE),
 ('ICT1222', 'end_practical', 100, FALSE),
 
@@ -54,7 +51,7 @@ VALUES
 ('ICT1253', 'assignment', 100, TRUE),
 ('ICT1253', 'mid', 100, TRUE),
 ('ICT1253', 'end_theory', 100, FALSE),
-('ICT1222', 'end_practical', 100, FALSE),
+('ICT1253', 'end_practical', 100, FALSE),
 
 -- ICT1242 - Computer Architecture
 ('ICT1242', 'quiz 01', 100, TRUE),
