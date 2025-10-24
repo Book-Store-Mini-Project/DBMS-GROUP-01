@@ -1,0 +1,109 @@
+CREATE OR REPLACE VIEW StudentGrades AS
+SELECT
+    sub.student_registration,
+    sub.student_name,
+    sub.student_status,
+    sub.academic_year,
+    sub.batch_name,
+    sub.course_code,
+    sub.course_name,
+    
+    -- Set final_total to 0 if student has approved medical
+    CASE WHEN sub.has_approved_medical_for_course = 1 THEN 0 ELSE sub.final_total END AS final_total,
+    
+    sub.has_approved_medical_for_course,
+    
+    -- Apply final grading logic with status rules
+    CASE
+        WHEN sub.student_status = 'suspended' THEN 'WH'
+        WHEN sub.has_approved_medical_for_course = 1 THEN 'MC'
+        WHEN sub.student_status = 'repeat' THEN
+            CASE
+                WHEN sub.final_total >= 55 THEN 'C'
+                WHEN sub.final_total >= 50 THEN 'C'
+                WHEN sub.final_total >= 45 THEN 'C-'
+                WHEN sub.final_total >= 40 THEN 'D+'
+                WHEN sub.final_total >= 35 THEN 'D'
+                ELSE 'E'
+            END
+        ELSE sub.computed_grade
+    END AS grade,
+
+    -- GPA point mapping (MC/WH = 0)
+    CASE
+        WHEN sub.student_status = 'suspended' THEN 0.00
+        WHEN sub.has_approved_medical_for_course = 1 THEN 0.00
+        WHEN sub.student_status = 'repeat' THEN
+            CASE
+                WHEN sub.final_total >= 55 THEN 2.00
+                WHEN sub.final_total >= 50 THEN 2.00
+                WHEN sub.final_total >= 45 THEN 1.70
+                WHEN sub.final_total >= 40 THEN 1.30
+                WHEN sub.final_total >= 35 THEN 1.00
+                ELSE 0.00
+            END
+        ELSE
+            CASE
+                WHEN sub.final_total >= 90 THEN 4.00
+                WHEN sub.final_total >= 80 THEN 4.00
+                WHEN sub.final_total >= 75 THEN 3.70
+                WHEN sub.final_total >= 70 THEN 3.30
+                WHEN sub.final_total >= 65 THEN 3.00
+                WHEN sub.final_total >= 60 THEN 2.70
+                WHEN sub.final_total >= 55 THEN 2.30
+                WHEN sub.final_total >= 50 THEN 2.00
+                WHEN sub.final_total >= 45 THEN 1.70
+                WHEN sub.final_total >= 40 THEN 1.30
+                WHEN sub.final_total >= 35 THEN 1.00
+                ELSE 0.00
+            END
+    END AS grade_point,
+
+    CURRENT_DATE AS calculated_date
+
+FROM (
+    SELECT
+        s.registration_no AS student_registration,
+        CONCAT(u.first_name, ' ', u.last_name) AS student_name,
+        s.status AS student_status,
+        b.academic_year,
+        b.batch_name,
+        r.course_code,
+        c.name AS course_name,
+        r.final_total,
+
+        -- Check approved medical for this course
+        (EXISTS (
+            SELECT 1
+            FROM Medical m
+            JOIN AssessmentComponent ac ON m.assessment_id = ac.assessment_id
+            WHERE m.student_id = s.user_id
+              AND ac.course_code = r.course_code
+              AND m.approved = TRUE
+              AND ac.name IN ('mid', 'end_theory', 'end_practical', 'assignment', 'project', 'quiz 01', 'quiz 02', 'quiz 03')
+        )) AS has_approved_medical_for_course,
+
+        -- Base grade calculation
+        CASE
+            WHEN r.final_total >= 90 THEN 'A+'
+            WHEN r.final_total >= 80 THEN 'A'
+            WHEN r.final_total >= 75 THEN 'A-'
+            WHEN r.final_total >= 70 THEN 'B+'
+            WHEN r.final_total >= 65 THEN 'B'
+            WHEN r.final_total >= 60 THEN 'B-'
+            WHEN r.final_total >= 55 THEN 'C+'
+            WHEN r.final_total >= 50 THEN 'C'
+            WHEN r.final_total >= 45 THEN 'C-'
+            WHEN r.final_total >= 40 THEN 'D+'
+            WHEN r.final_total >= 35 THEN 'D'
+            ELSE 'E'
+        END AS computed_grade
+
+    FROM final_mark r
+    JOIN Student s ON r.registration_no = s.registration_no
+    JOIN User u ON s.user_id = u.user_id
+    JOIN Batch b ON s.batch_id = b.batch_id
+    JOIN Course c ON r.course_code = c.course_code
+) AS sub
+ORDER BY sub.student_registration, sub.course_code;
+

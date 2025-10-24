@@ -1,0 +1,86 @@
+CREATE OR REPLACE VIEW EndMarkView AS
+SELECT
+    sc.student_id,
+    sc.course_code,
+    ROUND(
+        (
+            CASE
+                -- Course has both end_theory and end_practical
+                WHEN EXISTS (
+                    SELECT 1
+                    FROM AssessmentComponent acx
+                    WHERE acx.course_code = sc.course_code
+                      AND acx.name LIKE 'end_practical%'
+                ) AND EXISTS (
+                    SELECT 1
+                    FROM AssessmentComponent acx
+                    WHERE acx.course_code = sc.course_code
+                      AND acx.name LIKE 'end_theory%'
+                ) THEN
+                    -- 40 for theory + 20 for practical
+                    (
+                        COALESCE((
+                            SELECT m2.mark
+                            FROM Mark m2
+                            JOIN AssessmentComponent ac2 ON m2.assessment_id = ac2.assessment_id
+                            WHERE m2.student_id = sc.student_id
+                              AND ac2.course_code = sc.course_code
+                              AND ac2.name LIKE 'end_theory%'
+                            LIMIT 1
+                        ), 0) / 100.0 * 40
+                    ) +
+                    (
+                        COALESCE((
+                            SELECT m3.mark
+                            FROM Mark m3
+                            JOIN AssessmentComponent ac3 ON m3.assessment_id = ac3.assessment_id
+                            WHERE m3.student_id = sc.student_id
+                              AND ac3.course_code = sc.course_code
+                              AND ac3.name LIKE 'end_practical%'
+                            LIMIT 1
+                        ), 0) / 100.0 * 20
+                    )
+
+                -- Course has only end_practical
+                WHEN EXISTS (
+                    SELECT 1
+                    FROM AssessmentComponent acx
+                    WHERE acx.course_code = sc.course_code
+                      AND acx.name LIKE 'end_practical%'
+                ) THEN
+                    -- 60% for practical only
+                    (
+                        COALESCE((
+                            SELECT m3.mark
+                            FROM Mark m3
+                            JOIN AssessmentComponent ac3 ON m3.assessment_id = ac3.assessment_id
+                            WHERE m3.student_id = sc.student_id
+                              AND ac3.course_code = sc.course_code
+                              AND ac3.name LIKE 'end_practical%'
+                            LIMIT 1
+                        ), 0) / 100.0 * 60
+                    )
+
+                -- Course has only end_theory
+                ELSE
+                    (
+                        COALESCE((
+                            SELECT m4.mark
+                            FROM Mark m4
+                            JOIN AssessmentComponent ac4 ON m4.assessment_id = ac4.assessment_id
+                            WHERE m4.student_id = sc.student_id
+                              AND ac4.course_code = sc.course_code
+                              AND ac4.name LIKE 'end_theory%'
+                            LIMIT 1
+                        ), 0) / 100.0 * 60
+                    )
+            END
+        ), 2
+    ) AS end_total
+FROM (
+    -- distinct student + course_code combinations
+    SELECT DISTINCT m.student_id, ac.course_code
+    FROM Mark m
+    JOIN AssessmentComponent ac ON m.assessment_id = ac.assessment_id
+) AS sc;
+
