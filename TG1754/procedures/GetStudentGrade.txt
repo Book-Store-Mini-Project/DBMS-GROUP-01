@@ -1,0 +1,23 @@
+DELIMITER //
+
+CREATE PROCEDURE GetStudentGrade(IN p_registration_number VARCHAR(15))
+BEGIN
+    SELECT
+        student_registration,
+        student_name,
+        student_status,
+        academic_year,
+        batch_name,
+        course_code,
+        course_name,
+        COALESCE(final_total, 0) AS final_total,
+        grade,
+        grade_point AS gpa,
+        calculated_date
+    FROM StudentGrades 
+    WHERE student_registration = p_registration_number
+    ORDER BY course_code;
+END;
+//
+
+DELIMITER ;

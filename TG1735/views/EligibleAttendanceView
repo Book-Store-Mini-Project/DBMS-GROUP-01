@@ -1,0 +1,18 @@
+CREATE OR REPLACE VIEW EligibleAttendanceView AS
+SELECT
+    stu.registration_no,
+    s.course_code,
+    ROUND(
+        (COUNT(CASE WHEN a.status = 'present' THEN 1 END) * 100.0) / COUNT(a.session_id),
+        2
+    ) AS attendance_percentage
+FROM
+    Attendance a
+JOIN
+    Session s ON a.session_id = s.session_id
+JOIN
+    Student stu ON a.student_id = stu.user_id
+GROUP BY
+    a.student_id, s.course_code
+ORDER BY
+    a.student_id, s.course_code;

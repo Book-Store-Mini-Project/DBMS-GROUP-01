@@ -1,0 +1,10 @@
+CREATE TABLE Department (
+    dept_id INT AUTO_INCREMENT PRIMARY KEY,
+    dept_name VARCHAR(100) NOT NULL UNIQUE  
+);
+
+INSERT INTO Department (dept_id, dept_name) VALUES
+(1, 'Information and Communication Technology'),
+(2, 'Engineering Technology'),
+(3, 'Bio-Systems Technology'),
+(4, 'Multidisciplinary Studies');
