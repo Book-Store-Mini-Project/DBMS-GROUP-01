@@ -1,0 +1,70 @@
+CREATE OR REPLACE VIEW CAView AS
+SELECT
+    sc.student_id,
+    sc.course_code,
+    ROUND(
+        (
+            -- (Top 2 Quizzes / 100) * 10
+            (
+                (
+                    SELECT IFNULL(SUM(q.mark), 0)
+                    FROM (
+                        SELECT m2.mark
+                        FROM Mark m2
+                        JOIN AssessmentComponent ac2 ON m2.assessment_id = ac2.assessment_id
+                        WHERE m2.student_id = sc.student_id
+                          AND ac2.course_code = sc.course_code
+                          AND ac2.name LIKE 'quiz%'
+                        ORDER BY m2.mark DESC
+                        LIMIT 2
+                    ) AS q
+                ) / 100.0 * 10
+            )
+            +
+            -- (Mid / 100) * 20
+            (
+                COALESCE(( 
+                    SELECT m3.mark
+                    FROM Mark m3
+                    JOIN AssessmentComponent ac3 ON m3.assessment_id = ac3.assessment_id
+                    WHERE m3.student_id = sc.student_id
+                      AND ac3.course_code = sc.course_code
+                      AND ac3.name LIKE 'mid%'
+                    LIMIT 1
+                ), 0) / 100.0 * 20
+            )
+            +
+            -- (Assignment / 100) * 5
+            (
+                COALESCE(( 
+                    SELECT m4.mark
+                    FROM Mark m4
+                    JOIN AssessmentComponent ac4 ON m4.assessment_id = ac4.assessment_id
+                    WHERE m4.student_id = sc.student_id
+                      AND ac4.course_code = sc.course_code
+                      AND ac4.name LIKE 'assignment%'
+                    LIMIT 1
+                ), 0) / 100.0 * 5
+            )
+            +
+            -- (Project / 100) * 20 (only if it exists)
+            (
+                COALESCE((
+                    SELECT m5.mark
+                    FROM Mark m5
+                    JOIN AssessmentComponent ac5 ON m5.assessment_id = ac5.assessment_id
+                    WHERE m5.student_id = sc.student_id
+                      AND ac5.course_code = sc.course_code
+                      AND ac5.name LIKE 'project%'
+                    LIMIT 1
+                ), 0) / 100.0 * 20
+            )
+        ), 2
+    ) AS ca_total
+FROM (
+    -- distinct student + subject combinations
+    SELECT DISTINCT m.student_id, ac.course_code
+    FROM Mark m
+    JOIN AssessmentComponent ac ON m.assessment_id = ac.assessment_id
+) AS sc;
+

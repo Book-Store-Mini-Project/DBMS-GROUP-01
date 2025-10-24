@@ -2,12 +2,149 @@ CREATE TABLE User (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    name VARCHAR(100) GENERATED ALWAYS AS (CONCAT(first_name, ' ', last_name)) STORED,
     email VARCHAR(100) UNIQUE NOT NULL,
     address VARCHAR(255),
     phone_number VARCHAR(15),
     date_of_birth DATE,
     gender ENUM('Male', 'Female', 'Other')
 );
+
+
+CREATE TABLE Student (
+    user_id INT PRIMARY KEY,
+    registration_no VARCHAR(15) UNIQUE NOT NULL,
+    batch_id  INT,
+    dept_id INT NOT NULL,
+    status ENUM('proper', 'repeat', 'suspended') NOT NULL DEFAULT 'proper',
+    FOREIGN KEY (batch_id) REFERENCES Batch(batch_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Lecturer (
+    user_id INT PRIMARY KEY,
+    registration_no VARCHAR(15) UNIQUE NOT NULL,
+    dept_id INT NOT NULL,
+    position VARCHAR(50) NOT NULL,
+    date_of_joining DATE NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (dept_id) REFERENCES Department(dept_id)
+);
+
+
+CREATE TABLE TechnicalOfficer (
+    user_id INT PRIMARY KEY,
+    dept_id INT NOT NULL,
+    position VARCHAR(50) NOT NULL,
+    lab_assigned VARCHAR(100),
+    shift VARCHAR(50),
+    qualifications TEXT,  
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (dept_id) REFERENCES Department(dept_id)
+);
+
+
+CREATE TABLE Dean (
+    user_id INT PRIMARY KEY,
+    dept_id INT NOT NULL,
+    date_of_appointment DATE NOT NULL,
+    qualifications TEXT,  
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (dept_id) REFERENCES Department(dept_id)
+);
+
+
+CREATE TABLE Admin (
+    user_id INT PRIMARY KEY,
+    dept_id INT NOT NULL,
+    date_of_appointment DATE NOT NULL,
+    access_level VARCHAR(50), 
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (dept_id) REFERENCES Department(dept_id)
+);
+
+
+
+INSERT INTO User (user_id, first_name, last_name, email, address, phone_number, date_of_birth, gender) VALUES
+-- Students (15)
+(1, 'Akila', 'Perera', 'akila_20231701@fot.ruh.ac.lk', '123 Mulika Mawatha, Matara', '0771234567', '2004-05-15', 'Male'),
+(2, 'Eshani', 'Senevirathna', 'eshani_20231702@fot.ruh.ac.lk', '456 Uss Mawatha, Galle', '0771234568', '2004-06-20', 'Female'),
+(3, 'Amila', 'Kariyawasam', 'amila_20231703@fot.ruh.ac.lk', '789 Wewa Mawatha, Colombo', '0771234569', '2004-07-10', 'Male'),
+(4, 'Dinusha', 'Pathirana', 'dinusha_20231704@fot.ruh.ac.lk', '101 Muhudu Mawatha, Matara', '0771234570', '2004-08-05', 'Female'),
+(5, 'Ruwan', 'Silva', 'ruwan_20231705@fot.ruh.ac.lk', '202 Kanda Mawatha, Kandy', '0771234571', '2004-09-12', 'Male'),
+(6, 'Sanduni', 'Fernando', 'sanduni_20231706@fot.ruh.ac.lk', '303 Kele Mawatha, Galle', '0771234572', '2004-10-18', 'Female'),
+(7, 'Kasun', 'Jayasinghe', 'kasun_20231707@fot.ruh.ac.lk', '404 Ganga Mawatha, Colombo', '0771234573', '2004-11-25', 'Male'),
+(8, 'Nadeesha', 'Gunawardena', 'nadeesha_20231708@fot.ruh.ac.lk', '505 Muhudu Para, Matara', '0771234574', '2004-12-30', 'Female'),
+(9, 'Chathura', 'Bandara', 'chathura_20231709@fot.ruh.ac.lk', '606 Uda Para, Kandy', '0771234575', '2005-01-15', 'Male'),
+(10, 'Tharushi', 'Wijesinghe', 'tharushi_20231710@fot.ruh.ac.lk', '707 Kanda Uyana, Galle', '0771234576', '2005-02-20', 'Female'),
+
+
+(11, 'Sahan', 'Kumara', 'sahan_20231601@fot.ruh.ac.lk', '808 Parana Mawatha, Colombo', '0771234577', '2003-03-10', 'Male'),
+(12, 'Ishara', 'Madushani', 'ishara_20231602@fot.ruh.ac.lk', '909 Aluth Mawatha, Matara', '0771234578', '2003-04-15', 'Female'),
+(13, 'Heshan', 'Ibrahim', 'heshan_20231603@fot.ruh.ac.lk', '1010 Wewa Para, Kandy', '0771234579', '2003-05-20', 'Male'),
+(14, 'Meena', 'Rathnayake', 'meena_20231604@fot.ruh.ac.lk', '1111 Kanda Para, Galle', '0771234580', '2003-06-25', 'Female'),
+(15, 'Aruna', 'Menaka', 'aruna_20231605@fot.ruh.ac.lk', '1212 Muhudu Breeze, Colombo', '0771234581', '2003-07-30', 'Male'),
+
+
+-- Lecturers (5)
+(16, 'Ravindu', 'Senanayake', 'ravindu@fot.ruh.ac.lk', '45 Faculty Lane, Matara', '0775551111', '1980-03-05', 'Male'),
+(17, 'Priyanka', 'Herath', 'priyanka@fot.ruh.ac.lk', '12 Temple Road, Galle', '0775552222', '1982-07-22', 'Female'),
+(18, 'Dilan', 'Fernando', 'dilan@fot.ruh.ac.lk', '88 Hill Street, Kandy', '0775553333', '1979-11-11', 'Male'),
+(19, 'Nimasha', 'Jayawardena', 'nimasha@fot.ruh.ac.lk', '55 Campus Road, Colombo', '0775554444', '1985-12-15', 'Female'),
+(20, 'Chathura', 'Abeysinghe', 'chathura@fot.ruh.ac.lk', '67 University Avenue, Matara', '0775555555', '1981-04-10', 'Male'),
+
+-- Technical Officers (5)
+(21, 'Supun', 'Weerasinghe', 'supun@fot.ruh.ac.lk', '22 Lab Road, Matara', '0775556666', '1988-02-09', 'Male'),
+(22, 'Nimali', 'Jayawardena', 'nimali@fot.ruh.ac.lk', '34 Tech Lane, Galle', '0775557777', '1989-05-14', 'Female'),
+(23, 'Roshan', 'Perera', 'roshan@fot.ruh.ac.lk', '56 Science Park, Kandy', '0775558888', '1987-03-21', 'Male'),
+(24, 'Shalika', 'Fernando', 'shalika@fot.ruh.ac.lk', '78 Tech Road, Colombo', '0775559999', '1990-06-11', 'Female'),
+(25, 'Tharaka', 'Jayasekara', 'tharaka@fot.ruh.ac.lk', '89 Workshop Lane, Galle', '0775550000', '1986-10-05', 'Male'),
+
+-- Dean (1)
+(26, 'Chandana', 'Perera', 'chandana@fot.ruh.ac.lk', '12 Dean Residence, Matara', '0775551122', '1975-09-25', 'Male'),
+
+-- Admin (1)
+(27, 'Nirosha', 'Wijeratne', 'nirosha@fot.ruh.ac.lk', 'Faculty Admin Office, Matara', '0775552233', '1983-01-10', 'Female');
+
+
+
+INSERT INTO Student (user_id, registration_no, dept_id ,batch_id, status) VALUES
+(1, 'TG/2023/1701',1, 8, 'proper'),
+(2, 'TG/2023/1702',1, 8, 'proper'),
+(3, 'TG/2023/1703',1, 8, 'proper'),
+(4, 'TG/2023/1704',1, 8, 'proper'),
+(5, 'TG/2023/1705',1, 8, 'proper'),
+(6, 'TG/2023/1706',1, 8, 'proper'),
+(7, 'TG/2023/1707',1, 8, 'proper'),
+(8, 'TG/2023/1708',1, 8, 'proper'),
+(9, 'TG/2023/1709',1, 8, 'proper'),
+(10, 'TG/2023/1710',1, 8, 'proper'),
+
+(11, 'TG/2022/1601',1, 7, 'repeat'),
+(12, 'TG/2022/1602',1, 7, 'repeat'),
+(13, 'TG/2022/1603',1, 7, 'repeat'),
+(14, 'TG/2022/1604',1, 7, 'repeat'),
+(15, 'TG/2022/1605',1, 7, 'repeat');
+
+
+INSERT INTO Lecturer (user_id, registration_no, dept_id, position, date_of_joining) VALUES
+(16, 'L001', 1, 'Senior Lecturer', '2010-02-15'),
+(17, 'L002', 2, 'Lecturer', '2013-08-10'),
+(18, 'L003', 3, 'Professor', '2008-06-20'),
+(19, 'L004', 4, 'Senior Lecturer', '2015-04-05'),
+(20, 'L005', 4, 'Lecturer', '2018-11-12');
+
+INSERT INTO TechnicalOfficer (user_id, dept_id, position, lab_assigned, shift, qualifications) VALUES
+(21, 1, 'Technical Officer', 'Computer Lab 1', 'Morning', 'BSc in IT, Diploma in Networking'),
+(22, 2, 'Senior Technical Officer', 'Engineering Lab', 'Evening', 'BEng in Electronics'),
+(23, 3, 'Technical Officer', 'Biosystems Lab', 'Morning', 'BSc in Biosystems Technology'),
+(24, 4, 'Lab Assistant', 'Physics Lab', 'Evening', 'BSc in Physics'),
+(25, 4, 'Technical Officer', 'Mathematics Lab', 'Morning', 'BSc in Applied Mathematics');
+
+
+INSERT INTO Dean (user_id, dept_id, date_of_appointment, qualifications) VALUES
+(26, 1, '2020-01-01', 'PhD in Information Technology, 20 years academic experience');
+
+INSERT INTO Admin (user_id, dept_id, date_of_appointment, access_level) VALUES
+(27, 1, '2021-03-10', 'Full Access');
 
 

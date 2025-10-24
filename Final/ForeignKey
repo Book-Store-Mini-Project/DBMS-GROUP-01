@@ -1,0 +1,63 @@
+-- ========================
+-- Foreign Key Relationships
+-- ========================
+
+-- Student Table
+FOREIGN KEY (batch_id) REFERENCES Batch(batch_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (user_id) REFERENCES User(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- Lecturer Table
+FOREIGN KEY (user_id) REFERENCES User(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (dept_id) REFERENCES Department(dept_id);
+
+-- TechnicalOfficer Table
+FOREIGN KEY (user_id) REFERENCES User(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (dept_id) REFERENCES Department(dept_id);
+
+-- Dean Table
+FOREIGN KEY (user_id) REFERENCES User(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (dept_id) REFERENCES Department(dept_id);
+
+-- Admin Table
+FOREIGN KEY (user_id) REFERENCES User(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (dept_id) REFERENCES Department(dept_id);
+
+-- Course Table
+FOREIGN KEY (lecturer_id) REFERENCES Lecturer(user_id),
+FOREIGN KEY (dept_id) REFERENCES Department(dept_id);
+
+-- AssessmentComponent Table
+FOREIGN KEY (course_code) REFERENCES Course(course_code);
+
+-- CourseLecturer Table
+FOREIGN KEY (course_code) REFERENCES Course(course_code),
+FOREIGN KEY (user_id) REFERENCES Lecturer(user_id);
+
+-- Enrollment Table
+FOREIGN KEY (student_id) REFERENCES Student(user_id)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+FOREIGN KEY (course_code) REFERENCES Course(course_code)
+    ON UPDATE CASCADE ON DELETE CASCADE;
+
+-- Session Table
+FOREIGN KEY (course_code) REFERENCES Course(course_code);
+
+-- Attendance Table
+FOREIGN KEY (student_id) REFERENCES Student(user_id)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+FOREIGN KEY (session_id) REFERENCES Session(session_id)
+    ON UPDATE CASCADE ON DELETE CASCADE;
+
+-- Medical Table
+FOREIGN KEY (student_id) REFERENCES Student(user_id),
+FOREIGN KEY (assessment_id) REFERENCES AssessmentComponent(assessment_id);
+
+-- Mark Table
+FOREIGN KEY (student_id) REFERENCES Student(user_id),
+FOREIGN KEY (assessment_id) REFERENCES AssessmentComponent(assessment_id);

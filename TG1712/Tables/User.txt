@@ -1,23 +1,31 @@
-CREATE USER 'admin'@'localhost' IDENTIFIED BY 'password123';
-GRANT ALL PRIVILEGES ON techlms_db.* TO 'admin'@'localhost' WITH GRANT OPTION;
-FLUSH PRIVILEGES;
+CREATE USER IF NOT EXISTS 'admin'@'localhost' IDENTIFIED BY 'admin_pass';
+GRANT ALL PRIVILEGES ON ict1222_db.* TO 'admin'@'localhost' WITH GRANT OPTION;
 
-CREATE USER 'dean'@'localhost' IDENTIFIED BY 'password123';
-GRANT ALL PRIVILEGES ON techlms_db.* TO 'dean'@'localhost';
-REVOKE GRANT OPTION ON techlms_db.* FROM 'dean'@'localhost';
-FLUSH PRIVILEGES;
 
-CREATE USER 'lecturer'@'localhost' IDENTIFIED BY 'password123';
-GRANT ALL PRIVILEGES ON techlms_db.* TO 'lecturer'@'localhost';
-REVOKE GRANT OPTION ON techlms_db.* FROM 'lecturer'@'localhost';
-REVOKE CREATE USER ON *.* FROM 'lecturer'@'localhost';
-FLUSH PRIVILEGES;
+CREATE USER IF NOT EXISTS 'dean'@'localhost' IDENTIFIED BY 'dean_pass';
+GRANT ALL PRIVILEGES ON ict1222_db.* TO 'dean'@'localhost';
 
-CREATE USER 'technical_officer'@'localhost' IDENTIFIED BY 'password123';
-GRANT SELECT, INSERT, UPDATE ON techlms_db.Attendance TO 'technical_officer'@'localhost';
-FLUSH PRIVILEGES;
 
-CREATE USER 'student'@'localhost' IDENTIFIED BY 'password123';
-GRANT SELECT ON techlms_db.final_attendance TO 'student'@'localhost';
-GRANT SELECT ON techlms_db.final_marks TO 'student'@'localhost';
+CREATE USER IF NOT EXISTS 'lecturer'@'localhost' IDENTIFIED BY 'lecturer_pass';
+GRANT ALL PRIVILEGES ON ict1222_db.* TO 'lecturer'@'localhost';
+
+
+CREATE USER IF NOT EXISTS 'tech_officer'@'localhost' IDENTIFIED BY 'tech_pass';
+GRANT SELECT, INSERT, UPDATE ON 
+    ict1222_db.Attendance,
+    ict1222_db.Session,
+    ict1222_db.EligibleAttendanceView
+TO 'tech_officer'@'localhost';
+
+
+CREATE USER IF NOT EXISTS 'student'@'localhost' IDENTIFIED BY 'student_pass';
+GRANT SELECT ON 
+    ict1222_db.EligibleAttendanceView,
+    ict1222_db.final_mark,
+    ict1222_db.studentgradessummary,
+    ict1222_db.StudentGrades
+TO 'student'@'localhost';
+
+
+
 FLUSH PRIVILEGES;
