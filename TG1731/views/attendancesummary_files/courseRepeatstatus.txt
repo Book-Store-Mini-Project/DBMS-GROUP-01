@@ -1,0 +1,24 @@
+CREATE OR REPLACE VIEW CourseRepeatStatus AS
+SELECT
+    stu.user_id AS student_id,
+    stu.registration_no,
+    e.course_code,
+    COALESCE(ca.ca_total, 0) AS ca_total,
+    COALESCE(em.end_total, 0) AS end_mark,
+    CASE
+        WHEN COALESCE(ca.ca_total, 0) < 20 THEN 'CA Repeat'
+        ELSE 'CA Pass'
+    END AS ca_status,
+    CASE
+        WHEN COALESCE(em.end_total, 0) / 100 * 60 < 21 THEN 'End Repeat'
+        ELSE 'End Pass'
+    END AS end_status,
+    CASE
+        WHEN COALESCE(ca.ca_total, 0) < 20 OR COALESCE(em.end_total, 0) / 100 * 60 < 21 THEN 'Repeat'
+        ELSE 'Pass'
+    END AS overall_status
+FROM Student stu
+JOIN Enrollment e ON stu.user_id = e.student_id
+LEFT JOIN CAView ca ON stu.user_id = ca.student_id AND e.course_code = ca.course_code
+LEFT JOIN EndMarkView em ON stu.user_id = em.student_id AND e.course_code = em.course_code
+ORDER BY stu.registration_no, e.course_code;
