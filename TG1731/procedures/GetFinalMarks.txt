@@ -1,0 +1,25 @@
+DELIMITER //
+
+CREATE PROCEDURE GetFinalMarks(
+    IN p_registration_no VARCHAR(15), -- if NULL, returns whole batch
+    IN p_batch_id INT                  -- optional: filter by batch
+)
+BEGIN
+    SELECT 
+        s.registration_no,
+        CONCAT(u.first_name, ' ', u.last_name) AS student_name,
+        b.batch_name,
+        fm.course_code,
+        c.name AS course_name,
+        fm.final_total
+    FROM final_mark fm
+    JOIN Student s ON fm.registration_no = s.registration_no
+    JOIN User u ON s.user_id = u.user_id
+    JOIN Batch b ON s.batch_id = b.batch_id
+    JOIN Course c ON fm.course_code = c.course_code
+    WHERE (p_registration_no IS NULL OR s.registration_no = p_registration_no)
+      AND (p_batch_id IS NULL OR s.batch_id = p_batch_id)
+    ORDER BY s.registration_no, fm.course_code;
+END //
+
+DELIMITER ;
