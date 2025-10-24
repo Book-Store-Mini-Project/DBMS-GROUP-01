@@ -1,0 +1,17 @@
+DELIMITER //
+
+CREATE PROCEDURE GetStudentCAMarks(IN p_registration_number VARCHAR(15))
+BEGIN
+    SELECT 
+        ca.course_code, 
+        c.name AS course_name, 
+        COALESCE(ca.ca_total, 0) AS ca_total
+    FROM CAView ca
+    JOIN Student s ON ca.student_id = s.user_id
+    JOIN Course c ON ca.course_code = c.course_code
+    WHERE s.registration_no = p_registration_number
+    ORDER BY ca.course_code;
+END;
+//
+
+DELIMITER ;
