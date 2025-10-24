@@ -1,0 +1,17 @@
+DELIMITER //
+
+CREATE PROCEDURE GetStudentEndMarks(IN p_registration_number VARCHAR(15))
+BEGIN
+    SELECT 
+        em.course_code, 
+        c.name AS course_name, 
+        COALESCE(em.end_total, 0) AS end_total
+    FROM EndMarkView em
+    JOIN Student s ON em.student_id = s.user_id
+    JOIN Course c ON em.course_code = c.course_code
+    WHERE s.registration_no = p_registration_number
+    ORDER BY em.course_code;
+END;
+//
+
+DELIMITER ;
