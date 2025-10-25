@@ -11,7 +11,7 @@ JOIN Student s ON sg.student_registration = s.registration_no
 JOIN Batch b ON s.batch_id = b.batch_id
 JOIN Course c ON sg.course_code = c.course_code
 WHERE sg.grade NOT IN ('WH', 'MC', 'Ineligible')
-  AND c.course_code <> 'ENG1212'  -- ignore specific course for CGPA
-  AND sg.student_status <> 'repeat'  -- exclude repeating students
+  AND c.course_code != 'ENG1212'  
+  AND sg.student_status != 'repeat'  
 GROUP BY s.registration_no, b.academic_year
 ORDER BY s.registration_no, b.academic_year;

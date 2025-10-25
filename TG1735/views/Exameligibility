@@ -1,20 +1,18 @@
 CREATE OR REPLACE VIEW ExamEligibility AS
 SELECT
     s.registration_no,
-    CONCAT(u.first_name, ' ', u.last_name) AS student_name,
+    CONCAT(u.first_name,' ',u.last_name) AS student_name,
     fm.course_code,
     c.name AS course_name,
     
     
-    ROUND(a.attendance_percentage, 2) AS attendance_percentage,
-    
-    
-    ROUND(ca.ca_total, 2) AS ca_marks,
+    ROUND(ca.ca_total,2) AS ca_marks,
     
     
     CASE
         WHEN s.status = 'repeat' AND ca.ca_total >= 20 THEN 'Eligible'
-        WHEN s.status <> 'repeat' AND a.attendance_percentage >= 80 AND ca.ca_total >= 20 THEN 'Eligible'
+        WHEN s.status = 'suspended' THEN 'InEligible'
+        WHEN s.status != 'repeat' AND a.attendance_percentage >= 80 AND ca.ca_total >= 20 THEN 'Eligible'
         ELSE 'Not Eligible'
     END AS eligibility_status
 
