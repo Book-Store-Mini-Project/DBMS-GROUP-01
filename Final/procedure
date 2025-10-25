@@ -28,18 +28,18 @@ BEGIN
     DECLARE v_course_code VARCHAR(10);
     DECLARE v_enrollment_count INT;
 
-    -- Find course code from assessment component
+    
     SELECT course_code INTO v_course_code
     FROM AssessmentComponent
     WHERE assessment_id = NEW.assessment_id;
 
-    -- Check if student is enrolled for that course
+    
     SELECT COUNT(*) INTO v_enrollment_count
     FROM Enrollment
     WHERE student_id = NEW.student_id
       AND course_code = v_course_code;
 
-    -- If not enrolled, stop insertion
+    
     IF v_enrollment_count = 0 THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Error: Student is not enrolled in this course.';
@@ -53,7 +53,7 @@ DELIMITER //
 
 CREATE PROCEDURE GetAttendanceByCourseAndType(
     IN p_course_code VARCHAR(10),
-    IN p_type VARCHAR(10) -- 'theory', 'practical', or 'both'
+    IN p_type VARCHAR(10) 
 )
 BEGIN
     SELECT
@@ -128,8 +128,8 @@ DELIMITER ;
 DELIMITER //
 
 CREATE PROCEDURE GetFinalMarks(
-    IN p_registration_no VARCHAR(15), -- if NULL, returns whole batch
-    IN p_batch_id INT                  -- optional: filter by batch
+    IN p_registration_no VARCHAR(15), 
+    IN p_batch_id INT                 
 )
 BEGIN
     SELECT 
