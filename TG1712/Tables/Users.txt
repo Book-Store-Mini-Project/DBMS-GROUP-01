@@ -120,7 +120,7 @@ INSERT INTO Student (user_id, registration_no, dept_id ,batch_id, status) VALUES
 (10, 'TG/2023/1710',1, 8, 'proper'),
 
 (11, 'TG/2022/1601',1, 7, 'repeat'),
-(12, 'TG/2022/1602',1, 7, 'repeat'),
+(12, 'TG/2022/1602',1, 7, 'suspended'),
 (13, 'TG/2022/1603',1, 7, 'repeat'),
 (14, 'TG/2022/1604',1, 7, 'repeat'),
 (15, 'TG/2022/1605',1, 7, 'repeat');
