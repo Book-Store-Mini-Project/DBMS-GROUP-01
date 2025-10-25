@@ -2,7 +2,7 @@
 
 CREATE PROCEDURE GetAttendanceByCourseAndType(
     IN p_course_code VARCHAR(10),
-    IN p_type VARCHAR(10) -- 'theory', 'practical', or 'both'
+    IN p_type VARCHAR(10) 
 )
 BEGIN
     SELECT

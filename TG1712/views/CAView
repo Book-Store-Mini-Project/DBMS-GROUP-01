@@ -21,7 +21,7 @@ SELECT
                 ) / 100.0 * 10
             )
             +
-            -- (Mid / 100) * 20
+            -- (Mid / 100) * 25
             (
                 COALESCE(( 
                     SELECT m3.mark
@@ -31,7 +31,7 @@ SELECT
                       AND ac3.course_code = sc.course_code
                       AND ac3.name LIKE 'mid%'
                     LIMIT 1
-                ), 0) / 100.0 * 20
+                ), 0) / 100.0 * 25
             )
             +
             -- (Assignment / 100) * 5
@@ -67,4 +67,3 @@ FROM (
     FROM Mark m
     JOIN AssessmentComponent ac ON m.assessment_id = ac.assessment_id
 ) AS sc;
-

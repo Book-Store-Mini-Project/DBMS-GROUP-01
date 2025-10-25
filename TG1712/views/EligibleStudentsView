@@ -4,7 +4,7 @@ SELECT
     stu.registration_no,
     e.course_code,
 
-    -- Attendance
+    
     COALESCE(ea.attendance_percentage, 0) AS attendance_percentage,
     CASE 
         WHEN stu.status = 'repeat' THEN 'Attendance Ignored'
@@ -12,10 +12,10 @@ SELECT
         ELSE 'Lower Attendance'
     END AS attendance_status_detail,
 
-    -- CA Marks
+    
     COALESCE(ca.ca_total, 0) AS ca_total,
 
-    -- Eligibility Status
+    
     CASE
         WHEN (stu.status = 'repeat' OR ea.attendance_percentage >= 80)
              AND COALESCE(ca.ca_total, 0) >= 20
@@ -23,7 +23,7 @@ SELECT
         ELSE 'Ineligible'
     END AS eligibility_status,
 
-    -- Reason if not eligible
+    
     CASE
         WHEN ea.attendance_percentage < 80 THEN 'Low Attendance'
         WHEN COALESCE(ca.ca_total, 0) < 20 THEN 'Low CA Marks'

@@ -13,12 +13,13 @@ CREATE TABLE User (
 CREATE TABLE Student (
     user_id INT PRIMARY KEY,
     registration_no VARCHAR(15) UNIQUE NOT NULL,
-    batch_id  INT,
+    batch_id INT,
     dept_id INT NOT NULL,
     status ENUM('proper', 'repeat', 'suspended') NOT NULL DEFAULT 'proper',
     FOREIGN KEY (batch_id) REFERENCES Batch(batch_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
 
 CREATE TABLE Lecturer (
     user_id INT PRIMARY KEY,
@@ -107,23 +108,23 @@ INSERT INTO User (user_id, first_name, last_name, email, address, phone_number, 
 
 
 
-INSERT INTO Student (user_id, registration_no, dept_id ,batch_id, status) VALUES
-(1, 'TG/2023/1701',1, 8, 'proper'),
-(2, 'TG/2023/1702',1, 8, 'proper'),
-(3, 'TG/2023/1703',1, 8, 'proper'),
-(4, 'TG/2023/1704',1, 8, 'proper'),
-(5, 'TG/2023/1705',1, 8, 'proper'),
-(6, 'TG/2023/1706',1, 8, 'proper'),
-(7, 'TG/2023/1707',1, 8, 'proper'),
-(8, 'TG/2023/1708',1, 8, 'proper'),
-(9, 'TG/2023/1709',1, 8, 'proper'),
-(10, 'TG/2023/1710',1, 8, 'proper'),
+INSERT INTO Student (user_id, registration_no, dept_id, batch_id, status) VALUES
+(1,  'TG/2023/1701', 1, 8, 'proper'),
+(2,  'TG/2023/1702', 1, 8, 'proper'),
+(3,  'TG/2023/1703', 1, 8, 'proper'),
+(4,  'TG/2023/1704', 1, 8, 'proper'),
+(5,  'TG/2023/1705', 1, 8, 'proper'),
+(6,  'TG/2023/1706', 1, 8, 'proper'),
+(7,  'TG/2023/1707', 1, 8, 'proper'),
+(8,  'TG/2023/1708', 1, 8, 'proper'),
+(9,  'TG/2023/1709', 1, 8, 'proper'),
+(10, 'TG/2023/1710', 1, 8, 'proper'),
 
-(11, 'TG/2022/1601',1, 7, 'repeat'),
-(12, 'TG/2022/1602',1, 7, 'suspended'),
-(13, 'TG/2022/1603',1, 7, 'repeat'),
-(14, 'TG/2022/1604',1, 7, 'repeat'),
-(15, 'TG/2022/1605',1, 7, 'repeat');
+(11, 'TG/2022/1601', 1, 7, 'repeat'),
+(12, 'TG/2022/1602', 1, 7, 'repeat'),
+(13, 'TG/2022/1603', 1, 7, 'repeat'),
+(14, 'TG/2022/1604', 1, 7, 'repeat'),
+(15, 'TG/2022/1605', 1, 7, 'repeat');
 
 
 INSERT INTO Lecturer (user_id, registration_no, dept_id, position, date_of_joining) VALUES
