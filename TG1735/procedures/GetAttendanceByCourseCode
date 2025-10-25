@@ -1,0 +1,17 @@
+DELIMITER //
+
+CREATE PROCEDURE GetAttendanceByCourseCode(IN p_course_code VARCHAR(10))
+BEGIN
+    SELECT 
+        s.registration_no,
+        se.date,
+        a.status
+    FROM Attendance a
+    JOIN Session se ON a.session_id = se.session_id
+    JOIN Student s ON a.student_id = s.user_id
+    WHERE se.course_code = p_course_code
+    GROUP BY s.registration_no, se.date, a.status
+    ORDER BY s.registration_no, se.date;
+END //
+
+DELIMITER ;
