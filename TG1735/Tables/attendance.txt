@@ -56,7 +56,7 @@ INSERT INTO Attendance (student_id, session_id, status) VALUES
 (1, 157, 'present'), (1, 158, 'present'), (1, 159, 'present'), (1, 160, 'present'),
 (1, 161, 'present'), (1, 162, 'present'), (1, 163, 'present'), (1, 164, 'present'),
 (1, 165, 'present'),
--- Student 2 (~90% attendance: 142 present, 7 medical, 16 absent)
+-- Student 2 (~90% attendance: 149 present, 7 medical, 9 absent)
 (2, 1, 'present'), (2, 2, 'present'), (2, 3, 'present'), (2, 4, 'present'),
 (2, 5, 'present'), (2, 6, 'present'), (2, 7, 'present'), (2, 8, 'present'),
 (2, 9, 'present'), (2, 10, 'present'), (2, 11, 'present'), (2, 12, 'present'),
@@ -82,9 +82,9 @@ INSERT INTO Attendance (student_id, session_id, status) VALUES
 (2, 89, 'present'), (2, 90, 'present'), (2, 91, 'present'), (2, 92, 'medical'),
 (2, 93, 'present'), (2, 94, 'present'), (2, 95, 'present'), (2, 96, 'present'),
 (2, 97, 'present'), (2, 98, 'present'), (2, 99, 'present'), (2, 100, 'present'),
-(2, 101, 'absent'), (2, 102, 'absent'), (2, 103, 'absent'), (2, 104, 'absent'),
-(2, 105, 'absent'), (2, 106, 'absent'), (2, 107, 'absent'), (2, 108, 'absent'),
-(2, 109, 'absent'), (2, 110, 'absent'), (2, 111, 'absent'), (2, 112, 'absent'),
+(2, 101, 'present'), (2, 102, 'present'), (2, 103, 'present'), (2, 104, 'present'),
+(2, 105, 'present'), (2, 106, 'present'), (2, 107, 'present'), (2, 108, 'present'),
+(2, 109, 'present'), (2, 110, 'present'), (2, 111, 'present'), (2, 112, 'present'),
 (2, 113, 'medical'), (2, 114, 'medical'), (2, 115, 'medical'), (2, 116, 'medical'),
 (2, 117, 'present'), (2, 118, 'present'), (2, 119, 'present'), (2, 120, 'present'),
 (2, 121, 'present'), (2, 122, 'present'), (2, 123, 'present'), (2, 124, 'present'),
@@ -99,7 +99,7 @@ INSERT INTO Attendance (student_id, session_id, status) VALUES
 (2, 157, 'present'), (2, 158, 'present'), (2, 159, 'medical'), (2, 160, 'medical'),
 (2, 161, 'absent'), (2, 162, 'absent'), (2, 163, 'absent'), (2, 164, 'absent'),
 (2, 165, 'absent'),
--- Student 3 (~85% attendance: 134 present, 5 medical, 26 absent)
+-- Student 3 (~85% attendance: 141 present, 5 medical, 19 absent)
 (3, 1, 'present'), (3, 2, 'present'), (3, 3, 'present'), (3, 4, 'present'),
 (3, 5, 'present'), (3, 6, 'present'), (3, 7, 'present'), (3, 8, 'present'),
 (3, 9, 'present'), (3, 10, 'present'), (3, 11, 'present'), (3, 12, 'present'),
@@ -125,11 +125,11 @@ INSERT INTO Attendance (student_id, session_id, status) VALUES
 (3, 89, 'present'), (3, 90, 'present'), (3, 91, 'present'), (3, 92, 'present'),
 (3, 93, 'present'), (3, 94, 'present'), (3, 95, 'present'), (3, 96, 'present'),
 (3, 97, 'present'), (3, 98, 'present'), (3, 99, 'present'), (3, 100, 'present'),
-(3, 101, 'present'), (3, 102, 'absent'), (3, 103, 'absent'), (3, 104, 'absent'),
-(3, 105, 'absent'), (3, 106, 'absent'), (3, 107, 'absent'), (3, 108, 'absent'),
-(3, 109, 'absent'), (3, 110, 'absent'), (3, 111, 'absent'), (3, 112, 'absent'),
-(3, 113, 'absent'), (3, 114, 'absent'), (3, 115, 'absent'), (3, 116, 'absent'),
-(3, 117, 'absent'), (3, 118, 'absent'), (3, 119, 'absent'), (3, 120, 'absent'),
+(3, 101, 'present'), (3, 102, 'present'), (3, 103, 'present'), (3, 104, 'present'),
+(3, 105, 'present'), (3, 106, 'present'), (3, 107, 'present'), (3, 108, 'present'),
+(3, 109, 'present'), (3, 110, 'present'), (3, 111, 'present'), (3, 112, 'present'),
+(3, 113, 'present'), (3, 114, 'present'), (3, 115, 'present'), (3, 116, 'present'),
+(3, 117, 'present'), (3, 118, 'present'), (3, 119, 'present'), (3, 120, 'present'),
 (3, 121, 'medical'), (3, 122, 'medical'), (3, 123, 'medical'), (3, 124, 'medical'),
 (3, 125, 'present'), (3, 126, 'present'), (3, 127, 'present'), (3, 128, 'present'),
 (3, 129, 'present'), (3, 130, 'present'), (3, 131, 'present'), (3, 132, 'present'),
@@ -142,7 +142,7 @@ INSERT INTO Attendance (student_id, session_id, status) VALUES
 (3, 157, 'present'), (3, 158, 'medical'), (3, 159, 'absent'), (3, 160, 'absent'),
 (3, 161, 'absent'), (3, 162, 'absent'), (3, 163, 'absent'), (3, 164, 'absent'),
 (3, 165, 'absent'),
--- Student 4 (~80% attendance: 120 present, 13 medical, 32 absent)
+-- Student 4 (~82% attendance: 135 present, 13 medical, 17 absent)
 (4, 1, 'present'), (4, 2, 'present'), (4, 3, 'present'), (4, 4, 'present'),
 (4, 5, 'present'), (4, 6, 'present'), (4, 7, 'present'), (4, 8, 'present'),
 (4, 9, 'present'), (4, 10, 'present'), (4, 11, 'present'), (4, 12, 'present'),
@@ -165,13 +165,13 @@ INSERT INTO Attendance (student_id, session_id, status) VALUES
 (4, 77, 'present'), (4, 78, 'present'), (4, 79, 'present'), (4, 80, 'present'),
 (4, 81, 'present'), (4, 82, 'present'), (4, 83, 'present'), (4, 84, 'present'),
 (4, 85, 'present'), (4, 86, 'present'), (4, 87, 'present'), (4, 88, 'present'),
-(4, 89, 'present'), (4, 90, 'present'), (4, 91, 'absent'), (4, 92, 'absent'),
-(4, 93, 'absent'), (4, 94, 'absent'), (4, 95, 'absent'), (4, 96, 'absent'),
-(4, 97, 'absent'), (4, 98, 'absent'), (4, 99, 'absent'), (4, 100, 'absent'),
-(4, 101, 'absent'), (4, 102, 'absent'), (4, 103, 'absent'), (4, 104, 'absent'),
-(4, 105, 'absent'), (4, 106, 'absent'), (4, 107, 'absent'), (4, 108, 'absent'),
-(4, 109, 'absent'), (4, 110, 'absent'), (4, 111, 'absent'), (4, 112, 'absent'),
-(4, 113, 'absent'), (4, 114, 'absent'), (4, 115, 'medical'), (4, 116, 'medical'),
+(4, 89, 'present'), (4, 90, 'present'), (4, 91, 'present'), (4, 92, 'present'),
+(4, 93, 'present'), (4, 94, 'present'), (4, 95, 'present'), (4, 96, 'present'),
+(4, 97, 'present'), (4, 98, 'present'), (4, 99, 'present'), (4, 100, 'present'),
+(4, 101, 'present'), (4, 102, 'present'), (4, 103, 'present'), (4, 104, 'present'),
+(4, 105, 'present'), (4, 106, 'present'), (4, 107, 'present'), (4, 108, 'present'),
+(4, 109, 'present'), (4, 110, 'present'), (4, 111, 'present'), (4, 112, 'present'),
+(4, 113, 'present'), (4, 114, 'present'), (4, 115, 'medical'), (4, 116, 'medical'),
 (4, 117, 'medical'), (4, 118, 'medical'), (4, 119, 'medical'), (4, 120, 'medical'),
 (4, 121, 'medical'), (4, 122, 'medical'), (4, 123, 'medical'), (4, 124, 'medical'),
 (4, 125, 'present'), (4, 126, 'present'), (4, 127, 'present'), (4, 128, 'present'),
@@ -185,7 +185,7 @@ INSERT INTO Attendance (student_id, session_id, status) VALUES
 (4, 157, 'medical'), (4, 158, 'absent'), (4, 159, 'absent'), (4, 160, 'absent'),
 (4, 161, 'absent'), (4, 162, 'absent'), (4, 163, 'absent'), (4, 164, 'absent'),
 (4, 165, 'absent'),
--- Student 5 (~80% attendance: 122 present, 9 medical, 34 absent)
+-- Student 5 (~82% attendance: 135 present, 9 medical, 21 absent)
 (5, 1, 'present'), (5, 2, 'present'), (5, 3, 'present'), (5, 4, 'present'),
 (5, 5, 'present'), (5, 6, 'present'), (5, 7, 'present'), (5, 8, 'present'),
 (5, 9, 'present'), (5, 10, 'present'), (5, 11, 'present'), (5, 12, 'present'),
@@ -209,12 +209,12 @@ INSERT INTO Attendance (student_id, session_id, status) VALUES
 (5, 81, 'present'), (5, 82, 'present'), (5, 83, 'present'), (5, 84, 'present'),
 (5, 85, 'present'), (5, 86, 'present'), (5, 87, 'present'), (5, 88, 'present'),
 (5, 89, 'present'), (5, 90, 'present'), (5, 91, 'present'), (5, 92, 'present'),
-(5, 93, 'absent'), (5, 94, 'absent'), (5, 95, 'absent'), (5, 96, 'absent'),
-(5, 97, 'absent'), (5, 98, 'absent'), (5, 99, 'absent'), (5, 100, 'absent'),
-(5, 101, 'absent'), (5, 102, 'absent'), (5, 103, 'absent'), (5, 104, 'absent'),
-(5, 105, 'absent'), (5, 106, 'absent'), (5, 107, 'absent'), (5, 108, 'absent'),
-(5, 109, 'absent'), (5, 110, 'absent'), (5, 111, 'absent'), (5, 112, 'absent'),
-(5, 113, 'absent'), (5, 114, 'absent'), (5, 115, 'absent'), (5, 116, 'absent'),
+(5, 93, 'present'), (5, 94, 'present'), (5, 95, 'present'), (5, 96, 'present'),
+(5, 97, 'present'), (5, 98, 'present'), (5, 99, 'present'), (5, 100, 'present'),
+(5, 101, 'present'), (5, 102, 'present'), (5, 103, 'present'), (5, 104, 'present'),
+(5, 105, 'present'), (5, 106, 'present'), (5, 107, 'present'), (5, 108, 'present'),
+(5, 109, 'present'), (5, 110, 'present'), (5, 111, 'present'), (5, 112, 'present'),
+(5, 113, 'present'), (5, 114, 'present'), (5, 115, 'present'), (5, 116, 'present'),
 (5, 117, 'medical'), (5, 118, 'medical'), (5, 119, 'medical'), (5, 120, 'medical'),
 (5, 121, 'medical'), (5, 122, 'medical'), (5, 123, 'medical'), (5, 124, 'present'),
 (5, 125, 'present'), (5, 126, 'present'), (5, 127, 'present'), (5, 128, 'present'),
@@ -228,7 +228,7 @@ INSERT INTO Attendance (student_id, session_id, status) VALUES
 (5, 157, 'absent'), (5, 158, 'absent'), (5, 159, 'absent'), (5, 160, 'absent'),
 (5, 161, 'absent'), (5, 162, 'absent'), (5, 163, 'absent'), (5, 164, 'absent'),
 (5, 165, 'absent'),
--- Student 6 (~40% attendance: 63 present, 4 medical, 98 absent)
+-- Student 6 (~40% attendance: 63 present, 4 medical, 98 absent) 
 (6, 1, 'present'), (6, 2, 'absent'), (6, 3, 'absent'), (6, 4, 'present'),
 (6, 5, 'absent'), (6, 6, 'absent'), (6, 7, 'present'), (6, 8, 'absent'),
 (6, 9, 'absent'), (6, 10, 'present'), (6, 11, 'absent'), (6, 12, 'absent'),
@@ -314,7 +314,7 @@ INSERT INTO Attendance (student_id, session_id, status) VALUES
 (7, 157, 'present'), (7, 158, 'medical'), (7, 159, 'absent'), (7, 160, 'absent'),
 (7, 161, 'absent'), (7, 162, 'absent'), (7, 163, 'absent'), (7, 164, 'absent'),
 (7, 165, 'absent'),
--- Student 8 (~36% attendance: 56 present, 4 medical, 105 absent)
+-- Student 8 (~36% attendance: 56 present, 4 medical, 105 absent) 
 (8, 1, 'present'), (8, 2, 'present'), (8, 3, 'present'), (8, 4, 'present'),
 (8, 5, 'present'), (8, 6, 'present'), (8, 7, 'present'), (8, 8, 'present'),
 (8, 9, 'present'), (8, 10, 'present'), (8, 11, 'present'), (8, 12, 'present'),
@@ -357,7 +357,7 @@ INSERT INTO Attendance (student_id, session_id, status) VALUES
 (8, 157, 'absent'), (8, 158, 'absent'), (8, 159, 'absent'), (8, 160, 'absent'),
 (8, 161, 'absent'), (8, 162, 'absent'), (8, 163, 'absent'), (8, 164, 'absent'),
 (8, 165, 'absent'),
--- Student 9 (~34% attendance: 53 present, 3 medical, 109 absent)
+-- Student 9 (~34% attendance: 53 present, 3 medical, 109 absent) 
 (9, 1, 'present'), (9, 2, 'absent'), (9, 3, 'absent'), (9, 4, 'present'),
 (9, 5, 'absent'), (9, 6, 'absent'), (9, 7, 'present'), (9, 8, 'absent'),
 (9, 9, 'absent'), (9, 10, 'present'), (9, 11, 'absent'), (9, 12, 'absent'),
@@ -442,4 +442,27 @@ INSERT INTO Attendance (student_id, session_id, status) VALUES
 (10, 153, 'present'), (10, 154, 'present'), (10, 155, 'present'), (10, 156, 'present'),
 (10, 157, 'present'), (10, 158, 'present'), (10, 159, 'present'), (10, 160, 'present'),
 (10, 161, 'present'), (10, 162, 'present'), (10, 163, 'present'), (10, 164, 'present'),
-(10, 165, 'present');
+(10, 165, 'present'),
+-- Repeat Students [unchanged]
+(11, 4, 'present'),  -- TCS1212 quiz 01
+(11, 5, 'present'),  -- TCS1212 quiz 02
+(11, 6, 'present'),  -- TCS1212 quiz 03
+(11, 7, 'present'),  -- TCS1212 assignment
+(11, 8, 'present'),  -- TCS1212 mid
+(11, 16, 'present'), -- ICT1222 mid
+(11, 17, 'present'), -- ICT1222 project
+(11, 18, 'present'), -- ICT1222 end_practical
+(13, 19, 'present'), -- TMS1233 quiz 01
+(13, 20, 'present'), -- TMS1233 quiz 02
+(13, 21, 'present'), -- TMS1233 quiz 03
+(12, 41, 'present'), -- ICT1233 project
+(12, 42, 'present'), -- ICT1233 assignment
+(12, 43, 'present'), -- ICT1233 mid
+(12, 44, 'present'), -- ICT1233 end_theory
+(12, 45, 'present'), -- ICT1233 end_practical
+(13, 22, 'present'), -- TMS1233 mid
+(13, 23, 'present'), -- TMS1233 assignment
+(13, 24, 'present'), -- TMS1233 end_theory
+(13, 25, 'present'), -- ICT1253 quiz 01
+(13, 26, 'present'), -- ICT1253 quiz 02
+(13, 27, 'present'); -- ICT1253 quiz 03
