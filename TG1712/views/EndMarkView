@@ -5,7 +5,7 @@ SELECT
     ROUND(
         (
             CASE
-                -- Course has both end_theory and end_practical
+                
                 WHEN EXISTS (
                     SELECT 1
                     FROM AssessmentComponent acx
@@ -17,7 +17,7 @@ SELECT
                     WHERE acx.course_code = sc.course_code
                       AND acx.name LIKE 'end_theory%'
                 ) THEN
-                    -- 40 for theory + 20 for practical
+                    
                     (
                         COALESCE((
                             SELECT m2.mark
@@ -41,14 +41,14 @@ SELECT
                         ), 0) / 100.0 * 20
                     )
 
-                -- Course has only end_practical
+                
                 WHEN EXISTS (
                     SELECT 1
                     FROM AssessmentComponent acx
                     WHERE acx.course_code = sc.course_code
                       AND acx.name LIKE 'end_practical%'
                 ) THEN
-                    -- 60% for practical only
+                    
                     (
                         COALESCE((
                             SELECT m3.mark
@@ -61,7 +61,7 @@ SELECT
                         ), 0) / 100.0 * 60
                     )
 
-                -- Course has only end_theory
+                
                 ELSE
                     (
                         COALESCE((
@@ -78,7 +78,7 @@ SELECT
         ), 2
     ) AS end_total
 FROM (
-    -- distinct student + course_code combinations
+    
     SELECT DISTINCT m.student_id, ac.course_code
     FROM Mark m
     JOIN AssessmentComponent ac ON m.assessment_id = ac.assessment_id

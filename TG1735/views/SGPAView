@@ -33,6 +33,6 @@ FROM StudentGrades sg
 JOIN Student s ON sg.student_registration = s.registration_no
 JOIN Batch b ON s.batch_id = b.batch_id
 JOIN Course c ON sg.course_code = c.course_code
-WHERE sg.student_status NOT IN ('repeat', 'suspended')  -- exclude repeating and suspended students
+WHERE sg.student_status NOT IN ('repeat', 'suspended')  
 GROUP BY s.registration_no, b.academic_year, c.semester
 ORDER BY s.registration_no, b.academic_year, c.semester;

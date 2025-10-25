@@ -1,11 +1,7 @@
 CREATE OR REPLACE VIEW StudentGradesSummary AS
 SELECT
     student_registration,
-    student_name,
-    academic_year,
-    batch_name,
     course_code,
-    course_name,
     grade
 FROM StudentGrades
 ORDER BY

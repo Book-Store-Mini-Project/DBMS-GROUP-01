@@ -24,12 +24,10 @@ CREATE TABLE User (
     gender ENUM('Male', 'Female', 'Other')
 );
 
-
--- Student table
 CREATE TABLE Student (
     user_id INT PRIMARY KEY,
     registration_no VARCHAR(15) UNIQUE NOT NULL,
-    batch_id  INT,
+    batch_id INT,
     dept_id INT NOT NULL,
     status ENUM('proper', 'repeat', 'suspended') NOT NULL DEFAULT 'proper',
     FOREIGN KEY (batch_id) REFERENCES Batch(batch_id) ON DELETE CASCADE ON UPDATE CASCADE,

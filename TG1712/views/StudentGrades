@@ -8,12 +8,12 @@ SELECT
     sub.course_code,
     sub.course_name,
     
-    -- Set final_total to 0 if student has approved medical
+    
     CASE WHEN sub.has_approved_medical_for_course = 1 THEN 0 ELSE sub.final_total END AS final_total,
     
     sub.has_approved_medical_for_course,
     
-    -- Apply final grading logic with status rules
+    
     CASE
         WHEN sub.student_status = 'suspended' THEN 'WH'
         WHEN sub.has_approved_medical_for_course = 1 THEN 'MC'
@@ -29,7 +29,7 @@ SELECT
         ELSE sub.computed_grade
     END AS grade,
 
-    -- GPA point mapping (MC/WH = 0)
+   
     CASE
         WHEN sub.student_status = 'suspended' THEN 0.00
         WHEN sub.has_approved_medical_for_course = 1 THEN 0.00

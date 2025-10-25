@@ -15,6 +15,7 @@ This repository contains the database schema and sample data for the ICT1222 Min
 The database consists of the following tables:
 
 ### Tables
+
 - **User**: Base table for all roles (students, lecturers, etc.) with personal details.
 - **Student**: Subtype of User, with `registration_no` and `status` (proper/repeat).
 - **Lecturer**: Subtype of User, with teaching assignments.
@@ -29,7 +30,6 @@ The database consists of the following tables:
 - **Attendance**: Tracks student attendance status per session.
 - **Batch**: Manages student batches (2020-2024).
 - **Enrollment**: Links students to courses and batches.
-- **ExamSchedule**: Schedules exams for assessment components.
 
 ### Prerequisites
 - MySQL or a compatible relational database management system.

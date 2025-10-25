@@ -2,7 +2,6 @@ CREATE OR REPLACE VIEW FinalMarksMorDetails AS
 SELECT 
     s.registration_no,
     CONCAT(u.first_name, ' ', u.last_name) AS student_name,
-    s.batch_id,
     b.batch_name,
     fm.course_code,
     c.name AS course_name,

@@ -21,7 +21,7 @@ SELECT
                 ) / 100.0 * 10
             )
             +
-            -- (Mid / 100) * 20
+            -- (Mid / 100) * 25
             (
                 COALESCE(( 
                     SELECT m3.mark
@@ -31,7 +31,7 @@ SELECT
                       AND ac3.course_code = sc.course_code
                       AND ac3.name LIKE 'mid%'
                     LIMIT 1
-                ), 0) / 100.0 * 20
+                ), 0) / 100.0 * 25
             )
             +
             -- (Assignment / 100) * 5
@@ -67,6 +67,7 @@ FROM (
     FROM Mark m
     JOIN AssessmentComponent ac ON m.assessment_id = ac.assessment_id
 ) AS sc;
+
 
 
 CREATE OR REPLACE VIEW AttendanceSummaryByCourse AS
@@ -247,22 +248,44 @@ FROM (
 ) AS sc;
 
 
+
 CREATE OR REPLACE VIEW final_mark AS
 SELECT
     s.registration_no,
     c.course_code,
+    
+    -- Final total calculation
     CASE
         WHEN es.eligibility_status = 'Eligible' 
         THEN ROUND(COALESCE(c.ca_total, 0) + COALESCE(e.end_total, 0), 2)
         ELSE 0
-    END AS final_total
+    END AS final_total,
+
+    -- Reason for 0 mark
+    CASE
+        WHEN es.eligibility_status <> 'Eligible' THEN
+            CASE
+                WHEN c.ca_total < 20 THEN 'CA Fail'
+                WHEN a.attendance_percentage < 80 THEN 'Attendance Fail'
+                ELSE 'Not Eligible'
+            END
+        WHEN es.eligibility_status = 'Eligible' 
+             AND (COALESCE(c.ca_total, 0) + COALESCE(e.end_total, 0)) = 0 THEN 'End Fail'
+        ELSE 'Eligible'
+    END AS reason
+
 FROM CAView c
 LEFT JOIN EndMarkView e 
-    ON c.student_id = e.student_id 
+    ON c.student_id = e.student_id
    AND c.course_code = e.course_code
 LEFT JOIN EligibleStudentsView es 
     ON c.student_id = es.student_id 
    AND es.course_code = c.course_code
+LEFT JOIN eligibleattendanceview a
+    ON a.course_code = c.course_code
+   AND a.registration_no = (
+        SELECT s2.registration_no FROM Student s2 WHERE s2.user_id = c.student_id
+   )
 JOIN Student s 
     ON c.student_id = s.user_id;
 
@@ -298,7 +321,6 @@ CREATE OR REPLACE VIEW FinalMarksMorDetails AS
 SELECT 
     s.registration_no,
     CONCAT(u.first_name, ' ', u.last_name) AS student_name,
-    s.batch_id,
     b.batch_name,
     fm.course_code,
     c.name AS course_name,
@@ -422,15 +444,10 @@ ORDER BY sub.student_registration, sub.course_code;
 
 
 
-
 CREATE OR REPLACE VIEW StudentGradesSummary AS
 SELECT
     student_registration,
-    student_name,
-    academic_year,
-    batch_name,
     course_code,
-    course_name,
     grade
 FROM StudentGrades
 ORDER BY
@@ -438,6 +455,7 @@ ORDER BY
     batch_name,
     student_registration,
     course_code;
+
 
 
 CREATE OR REPLACE VIEW CGPAVIEW AS
@@ -454,8 +472,11 @@ JOIN Batch b ON s.batch_id = b.batch_id
 JOIN Course c ON sg.course_code = c.course_code
 WHERE sg.grade NOT IN ('WH', 'MC', 'Ineligible')
   AND c.course_code <> 'ENG1212'  -- ignore specific course for CGPA
+  AND sg.student_status <> 'repeat'  -- exclude repeating students
 GROUP BY s.registration_no, b.academic_year
 ORDER BY s.registration_no, b.academic_year;
+
+
 
 CREATE OR REPLACE VIEW SGPAView AS
 SELECT
@@ -492,6 +513,7 @@ FROM StudentGrades sg
 JOIN Student s ON sg.student_registration = s.registration_no
 JOIN Batch b ON s.batch_id = b.batch_id
 JOIN Course c ON sg.course_code = c.course_code
+WHERE sg.student_status NOT IN ('repeat', 'suspend')  -- exclude repeating and suspended students
 GROUP BY s.registration_no, b.academic_year, c.semester
 ORDER BY s.registration_no, b.academic_year, c.semester;
 
@@ -508,16 +530,18 @@ JOIN CGPAView cg
     ON sg.student_registration = cg.student_registration
 ORDER BY sg.student_registration, sg.semester_name;
 
-
 CREATE OR REPLACE VIEW ExamEligibility AS
 SELECT
     s.registration_no,
-    CONCAT(u.first_name,' ',u.last_name) AS student_name,
+    CONCAT(u.first_name, ' ', u.last_name) AS student_name,
     fm.course_code,
     c.name AS course_name,
     
-    -- CA total
-    ROUND(ca.ca_total,2) AS ca_marks,
+    -- Attendance percentage
+    ROUND(a.attendance_percentage, 2) AS attendance_percentage,
+    
+    -- CA total marks
+    ROUND(ca.ca_total, 2) AS ca_marks,
     
     -- Eligibility check
     CASE

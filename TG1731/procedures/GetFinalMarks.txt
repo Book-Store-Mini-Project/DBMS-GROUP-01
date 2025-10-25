@@ -1,8 +1,8 @@
 DELIMITER //
 
 CREATE PROCEDURE GetFinalMarks(
-    IN p_registration_no VARCHAR(15), -- if NULL, returns whole batch
-    IN p_batch_id INT                  -- optional: filter by batch
+    IN p_registration_no VARCHAR(15), 
+    IN p_batch_id INT                  
 )
 BEGIN
     SELECT 
