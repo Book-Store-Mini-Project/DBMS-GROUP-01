@@ -1,0 +1,36 @@
+DELIMITER //
+
+CREATE PROCEDURE GetCompleteStudentReport(IN p_registration_number VARCHAR(15))
+BEGIN
+    SELECT 
+        s.registration_no AS student_registration,
+        s.status AS student_status,
+        sg.academic_year,
+        sg.batch_name,
+        f.course_code,
+        sg.course_name,
+        COALESCE(f.final_total, 0) AS final_total,
+        sg.grade,
+        sg.grade_point AS course_gpa,
+        COALESCE(ca.ca_total, 0) AS ca_total,
+        COALESCE(em.end_total, 0) AS end_total,
+        COALESCE(ea.attendance_percentage, 0) AS attendance_percentage,
+        es.eligibility_status,
+        COALESCE(sg_view.sgpa, 0) AS sgpa,
+        COALESCE(cg_view.cgpa, 0) AS cgpa
+    FROM final_mark f
+    JOIN Student s ON f.registration_no = s.registration_no
+    JOIN StudentGrades sg ON s.registration_no = sg.student_registration AND f.course_code = sg.course_code
+    LEFT JOIN CAView ca ON s.user_id = ca.student_id AND f.course_code = ca.course_code
+    LEFT JOIN EndMarkView em ON s.user_id = em.student_id AND f.course_code = em.course_code
+    LEFT JOIN EligibleAttendanceView ea ON s.registration_no = ea.registration_no AND f.course_code = ea.course_code
+    LEFT JOIN EligibleStudentsView es ON s.registration_no = es.registration_no AND f.course_code = es.course_code
+    LEFT JOIN SGPAVIEW sg_view ON s.registration_no = sg_view.student_registration AND sg.academic_year = sg_view.academic_year
+    LEFT JOIN CGPAVIEW cg_view ON s.registration_no = cg_view.student_registration AND sg.academic_year = cg_view.academic_year
+    WHERE s.registration_no = p_registration_number
+    ORDER BY f.course_code;
+END;
+//
+
+DELIMITER ;
+

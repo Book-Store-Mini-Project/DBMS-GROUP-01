@@ -1,0 +1,44 @@
+CREATE OR REPLACE VIEW EligibleStudentsView AS
+SELECT
+    stu.user_id AS student_id,
+    stu.registration_no,
+    e.course_code,
+
+    -- Attendance
+    COALESCE(ea.attendance_percentage, 0) AS attendance_percentage,
+    CASE 
+        WHEN stu.status = 'repeat' THEN 'Attendance Ignored'
+        WHEN ea.attendance_percentage >= 80 THEN 'Meets Criteria'
+        ELSE 'Lower Attendance'
+    END AS attendance_status_detail,
+
+    -- CA Marks
+    COALESCE(ca.ca_total, 0) AS ca_total,
+
+    -- Eligibility Status
+    CASE
+        WHEN (stu.status = 'repeat' OR ea.attendance_percentage >= 80)
+             AND COALESCE(ca.ca_total, 0) >= 20
+        THEN 'Eligible'
+        ELSE 'Ineligible'
+    END AS eligibility_status,
+
+    -- Reason if not eligible
+    CASE
+        WHEN ea.attendance_percentage < 80 THEN 'Low Attendance'
+        WHEN COALESCE(ca.ca_total, 0) < 20 THEN 'Low CA Marks'
+        ELSE 'Meets Criteria'
+    END AS ineligibility_reason
+
+FROM Student stu
+JOIN Enrollment e 
+    ON stu.user_id = e.student_id
+LEFT JOIN EligibleAttendanceView ea 
+    ON stu.registration_no = ea.registration_no 
+   AND e.course_code = ea.course_code
+LEFT JOIN CAView ca 
+    ON stu.user_id = ca.student_id 
+   AND e.course_code = ca.course_code
+
+ORDER BY stu.registration_no, e.course_code;
+

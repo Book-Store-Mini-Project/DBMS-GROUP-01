@@ -1,0 +1,339 @@
+DELIMITER //
+
+CREATE TRIGGER AfterMedicalApproval
+AFTER UPDATE ON Medical
+FOR EACH ROW
+BEGIN
+    IF NEW.approved = 1 AND OLD.approved = 0 THEN
+        UPDATE Attendance a
+        JOIN Session s ON a.session_id = s.session_id
+        JOIN AssessmentComponent ac ON s.course_code = ac.course_code
+        SET a.status = 'present'
+        WHERE a.student_id = NEW.student_id
+          AND a.status = 'absent'
+          AND ac.assessment_id = NEW.assessment_id;
+    END IF;
+END;
+//
+
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE TRIGGER BeforeInsertMark
+BEFORE INSERT ON Mark
+FOR EACH ROW
+BEGIN
+    DECLARE v_course_code VARCHAR(10);
+    DECLARE v_enrollment_count INT;
+
+    -- Find course code from assessment component
+    SELECT course_code INTO v_course_code
+    FROM AssessmentComponent
+    WHERE assessment_id = NEW.assessment_id;
+
+    -- Check if student is enrolled for that course
+    SELECT COUNT(*) INTO v_enrollment_count
+    FROM Enrollment
+    WHERE student_id = NEW.student_id
+      AND course_code = v_course_code;
+
+    -- If not enrolled, stop insertion
+    IF v_enrollment_count = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Error: Student is not enrolled in this course.';
+    END IF;
+END;
+//
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE GetAttendanceByCourseAndType(
+    IN p_course_code VARCHAR(10),
+    IN p_type VARCHAR(10) -- 'theory', 'practical', or 'both'
+)
+BEGIN
+    SELECT
+        s.registration_no,
+        se.course_code,
+        ROUND(SUM(CASE WHEN a.status='present' THEN se.duration ELSE 0 END)/SUM(se.duration)*100, 2) AS attendance_percentage
+    FROM Attendance a
+    JOIN Session se ON a.session_id = se.session_id
+    JOIN Student s ON a.student_id = s.user_id
+    WHERE se.course_code = p_course_code
+      AND (p_type='both' OR se.type = p_type)
+    GROUP BY s.registration_no, se.course_code
+    ORDER BY s.registration_no;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE GetAttendanceByCourseCode(IN p_course_code VARCHAR(10))
+BEGIN
+    SELECT 
+        s.registration_no,
+        se.date,
+        a.status
+    FROM Attendance a
+    JOIN Session se ON a.session_id = se.session_id
+    JOIN Student s ON a.student_id = s.user_id
+    WHERE se.course_code = p_course_code
+    GROUP BY s.registration_no, se.date, a.status
+    ORDER BY s.registration_no, se.date;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE GetCompleteStudentReport(IN p_registration_number VARCHAR(15))
+BEGIN
+    SELECT 
+        s.registration_no AS student_registration,
+        s.status AS student_status,
+        sg.academic_year,
+        sg.batch_name,
+        f.course_code,
+        sg.course_name,
+        COALESCE(f.final_total, 0) AS final_total,
+        sg.grade,
+        sg.grade_point AS course_gpa,
+        COALESCE(ca.ca_total, 0) AS ca_total,
+        COALESCE(em.end_total, 0) AS end_total,
+        COALESCE(ea.attendance_percentage, 0) AS attendance_percentage,
+        es.eligibility_status,
+        COALESCE(sg_view.sgpa, 0) AS sgpa,
+        COALESCE(cg_view.cgpa, 0) AS cgpa
+    FROM final_mark f
+    JOIN Student s ON f.registration_no = s.registration_no
+    JOIN StudentGrades sg ON s.registration_no = sg.student_registration AND f.course_code = sg.course_code
+    LEFT JOIN CAView ca ON s.user_id = ca.student_id AND f.course_code = ca.course_code
+    LEFT JOIN EndMarkView em ON s.user_id = em.student_id AND f.course_code = em.course_code
+    LEFT JOIN EligibleAttendanceView ea ON s.registration_no = ea.registration_no AND f.course_code = ea.course_code
+    LEFT JOIN EligibleStudentsView es ON s.registration_no = es.registration_no AND f.course_code = es.course_code
+    LEFT JOIN SGPAVIEW sg_view ON s.registration_no = sg_view.student_registration AND sg.academic_year = sg_view.academic_year
+    LEFT JOIN CGPAVIEW cg_view ON s.registration_no = cg_view.student_registration AND sg.academic_year = cg_view.academic_year
+    WHERE s.registration_no = p_registration_number
+    ORDER BY f.course_code;
+END;
+//
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE GetFinalMarks(
+    IN p_registration_no VARCHAR(15), -- if NULL, returns whole batch
+    IN p_batch_id INT                  -- optional: filter by batch
+)
+BEGIN
+    SELECT 
+        s.registration_no,
+        CONCAT(u.first_name, ' ', u.last_name) AS student_name,
+        b.batch_name,
+        fm.course_code,
+        c.name AS course_name,
+        fm.final_total
+    FROM final_mark fm
+    JOIN Student s ON fm.registration_no = s.registration_no
+    JOIN User u ON s.user_id = u.user_id
+    JOIN Batch b ON s.batch_id = b.batch_id
+    JOIN Course c ON fm.course_code = c.course_code
+    WHERE (p_registration_no IS NULL OR s.registration_no = p_registration_no)
+      AND (p_batch_id IS NULL OR s.batch_id = p_batch_id)
+    ORDER BY s.registration_no, fm.course_code;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE GetMarksByCourseCode(IN p_course_code VARCHAR(10))
+BEGIN
+    SELECT 
+        s.registration_no,
+        ac.name AS assessment_type,
+        m.mark
+    FROM Mark m
+    JOIN AssessmentComponent ac ON m.assessment_id = ac.assessment_id
+    JOIN Student s ON m.student_id = s.user_id
+    WHERE ac.course_code = p_course_code
+    ORDER BY s.registration_no, ac.name;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE GetMarksByCourseCodeAndRegNo(
+    IN p_course_code VARCHAR(25),
+    IN p_registration_number VARCHAR(25)
+)
+BEGIN
+    SELECT 
+        ac.name AS assessment_type,
+        m.mark
+    FROM Mark m
+    JOIN AssessmentComponent ac ON m.assessment_id = ac.assessment_id
+    JOIN Student s ON m.student_id = s.user_id
+    WHERE ac.course_code = p_course_code
+      AND s.registration_no = p_registration_number
+    ORDER BY ac.name;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE GetMarksByRegistrationNumber(IN p_registration_number VARCHAR(15))
+BEGIN
+    SELECT 
+        ac.course_code,
+        ac.name AS assessment_type,
+        m.mark
+    FROM Mark m
+    JOIN AssessmentComponent ac ON m.assessment_id = ac.assessment_id
+    JOIN Student s ON m.student_id = s.user_id
+    WHERE s.registration_no = p_registration_number
+    ORDER BY ac.course_code, ac.name;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE GetStudentAttendance(IN p_registration_number VARCHAR(15))
+BEGIN
+    SELECT 
+        se.course_code,
+        a.status,
+        se.session_number,
+        se.date
+    FROM Attendance a
+    JOIN Session se ON a.session_id = se.session_id
+    JOIN Student s ON a.student_id = s.user_id
+    WHERE s.registration_no = p_registration_number
+    ORDER BY se.course_code, se.session_number;
+END;
+//
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE GetStudentAttendancePercentage(IN p_registration_number VARCHAR(15))
+BEGIN
+    SELECT 
+        ea.registration_no,
+        ea.course_code,
+        c.name AS course_name,
+        COALESCE(ea.attendance_percentage, 0) AS attendance_percentage
+    FROM EligibleAttendanceView ea
+    JOIN Course c ON ea.course_code = c.course_code
+    WHERE ea.registration_no = p_registration_number
+    ORDER BY ea.course_code;
+END;
+//
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE GetStudentCAMarks(IN p_registration_number VARCHAR(15))
+BEGIN
+    SELECT 
+        ca.course_code, 
+        c.name AS course_name, 
+        COALESCE(ca.ca_total, 0) AS ca_total
+    FROM CAView ca
+    JOIN Student s ON ca.student_id = s.user_id
+    JOIN Course c ON ca.course_code = c.course_code
+    WHERE s.registration_no = p_registration_number
+    ORDER BY ca.course_code;
+END;
+//
+
+DELIMITER ;
+
+
+CREATE PROCEDURE GetStudentEligibility(IN p_registration_number VARCHAR(15))
+BEGIN
+    SELECT 
+        e.registration_no, 
+        e.course_code, 
+        c.name AS course_name,
+        COALESCE(e.eligibility_status, 'Unknown') AS eligibility_status
+    FROM EligibleStudentsView e
+    JOIN Course c ON e.course_code = c.course_code
+    WHERE e.registration_no = p_registration_number
+    ORDER BY e.course_code;
+END;
+//
+
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE PROCEDURE GetStudentEndMarks(IN p_registration_number VARCHAR(15))
+BEGIN
+    SELECT 
+        em.course_code, 
+        c.name AS course_name, 
+        COALESCE(em.end_total, 0) AS end_total
+    FROM EndMarkView em
+    JOIN Student s ON em.student_id = s.user_id
+    JOIN Course c ON em.course_code = c.course_code
+    WHERE s.registration_no = p_registration_number
+    ORDER BY em.course_code;
+END;
+//
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE GetStudentGPA(IN p_registration_number VARCHAR(15))
+BEGIN
+    SELECT 
+        COALESCE(sg.sgpa, 0) AS SGPA,
+        COALESCE(cg.cgpa, 0) AS CGPA,
+        sg.academic_year
+    FROM SGPAVIEW sg
+    JOIN CGPAVIEW cg ON sg.student_registration = cg.student_registration AND sg.academic_year = cg.academic_year
+    WHERE sg.student_registration = p_registration_number
+    ORDER BY sg.academic_year DESC
+    LIMIT 1;
+END;
+//
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE GetStudentGrade(IN p_registration_number VARCHAR(15))
+BEGIN
+    SELECT
+        student_registration,
+        student_name,
+        student_status,
+        academic_year,
+        batch_name,
+        course_code,
+        course_name,
+        COALESCE(final_total, 0) AS final_total,
+        grade,
+        grade_point AS gpa,
+        calculated_date
+    FROM StudentGrades 
+    WHERE student_registration = p_registration_number
+    ORDER BY course_code;
+END;
+//
+
+DELIMITER ;

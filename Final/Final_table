@@ -1,0 +1,175 @@
+CREATE TABLE Department (
+    dept_id INT AUTO_INCREMENT PRIMARY KEY,
+    dept_name VARCHAR(100) NOT NULL UNIQUE  
+);
+
+CREATE TABLE Batch (
+    batch_id INT AUTO_INCREMENT PRIMARY KEY,
+    batch_name VARCHAR(50) NOT NULL, 
+    academic_year VARCHAR(9) NOT NULL DEFAULT '2024/2025',
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL
+);
+
+
+-- User table
+CREATE TABLE User (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    address VARCHAR(255),
+    phone_number VARCHAR(15),
+    date_of_birth DATE,
+    gender ENUM('Male', 'Female', 'Other')
+);
+
+
+-- Student table
+CREATE TABLE Student (
+    user_id INT PRIMARY KEY,
+    registration_no VARCHAR(15) UNIQUE NOT NULL,
+    batch_id  INT,
+    dept_id INT NOT NULL,
+    status ENUM('proper', 'repeat', 'suspended') NOT NULL DEFAULT 'proper',
+    FOREIGN KEY (batch_id) REFERENCES Batch(batch_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+CREATE TABLE Lecturer (
+    user_id INT PRIMARY KEY,
+    registration_no VARCHAR(15) UNIQUE NOT NULL,
+    dept_id INT NOT NULL,
+    position VARCHAR(50) NOT NULL,
+    date_of_joining DATE NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (dept_id) REFERENCES Department(dept_id)
+);
+
+
+CREATE TABLE TechnicalOfficer (
+    user_id INT PRIMARY KEY,
+    dept_id INT NOT NULL,
+    position VARCHAR(50) NOT NULL,
+    lab_assigned VARCHAR(100),
+    shift VARCHAR(50),
+    qualifications TEXT,  
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (dept_id) REFERENCES Department(dept_id)
+);
+
+
+CREATE TABLE Dean (
+    user_id INT PRIMARY KEY,
+    dept_id INT NOT NULL,
+    date_of_appointment DATE NOT NULL,
+    qualifications TEXT,  
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (dept_id) REFERENCES Department(dept_id)
+);
+
+
+CREATE TABLE Admin (
+    user_id INT PRIMARY KEY,
+    dept_id INT NOT NULL,
+    date_of_appointment DATE NOT NULL,
+    access_level VARCHAR(50), 
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (dept_id) REFERENCES Department(dept_id)
+);
+
+
+-- Course table
+
+CREATE TABLE Course (
+    course_code VARCHAR(10) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    credits INT NOT NULL CHECK (credits > 0),
+    has_theory BOOLEAN DEFAULT TRUE,
+    has_practical BOOLEAN DEFAULT FALSE,
+    lecturer_id INT NOT NULL,
+    dept_id INT NOT NULL, 
+    semester VARCHAR(50) DEFAULT 'Level 1 Semester 2',
+    FOREIGN KEY (lecturer_id) REFERENCES Lecturer(user_id),
+    FOREIGN KEY (dept_id) REFERENCES Department(dept_id)
+);
+
+
+
+-- AssessmentComponent table
+CREATE TABLE AssessmentComponent (
+    assessment_id INT AUTO_INCREMENT PRIMARY KEY,
+    course_code VARCHAR(10) NOT NULL,
+    name ENUM('quiz 01', 'quiz 02', 'quiz 03', 'mid', 'end_theory', 'end_practical', 'project', 'assignment') NOT NULL,
+    mark INT DEFAULT 100 CHECK (mark >= 0 AND mark <= 100),
+    is_ca BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY (course_code) REFERENCES Course(course_code)
+);
+
+
+
+-- Enrollment table
+CREATE TABLE Enrollment (
+    student_id INT NOT NULL,
+    course_code VARCHAR(10) NOT NULL,
+    enroll_date DATE NOT NULL,
+    PRIMARY KEY (student_id, course_code),
+    FOREIGN KEY (student_id) REFERENCES Student(user_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (course_code) REFERENCES Course(course_code)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
+-- Session table
+CREATE TABLE Session (
+    session_id INT AUTO_INCREMENT PRIMARY KEY,
+    course_code VARCHAR(10) NOT NULL,
+    type ENUM('theory', 'practical') NOT NULL,
+    session_number INT NOT NULL CHECK (session_number BETWEEN 1 AND 15),
+    lec_hall VARCHAR(50),
+    date DATE NOT NULL,
+    duration FLOAT NOT NULL,
+    FOREIGN KEY (course_code) REFERENCES Course(course_code)
+);
+
+-- Attendance table
+CREATE TABLE Attendance (
+    student_id INT NOT NULL,
+    session_id INT NOT NULL,
+    status ENUM('present', 'absent', 'medical') NOT NULL,
+    PRIMARY KEY (student_id, session_id),
+    FOREIGN KEY (student_id) REFERENCES Student(user_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (session_id) REFERENCES Session(session_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
+
+-- Medical table
+CREATE TABLE Medical(
+    medical_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    submission_date DATE NOT NULL,
+    affected_date DATE, 
+    assessment_id INT,
+    session_id  INT,
+    description TEXT, 
+    approved BOOLEAN DEFAULT FALSE, 
+    FOREIGN KEY (student_id) REFERENCES Student(user_id),
+    FOREIGN KEY (assessment_id) REFERENCES AssessmentComponent(assessment_id)
+);
+
+-- Mark table
+CREATE TABLE Mark (
+    student_id INT NOT NULL,
+    assessment_id INT NOT NULL,
+    mark FLOAT CHECK (mark BETWEEN 0 AND 100),
+    PRIMARY KEY (student_id, assessment_id),
+    FOREIGN KEY (student_id) REFERENCES Student(user_id),
+    FOREIGN KEY (assessment_id) REFERENCES AssessmentComponent(assessment_id)
+);
