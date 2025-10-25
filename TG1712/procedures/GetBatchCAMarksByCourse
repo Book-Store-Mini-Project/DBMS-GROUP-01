@@ -1,0 +1,15 @@
+DELIMITER //
+
+CREATE PROCEDURE GetBatchCAMarksByCourse(IN p_course_code VARCHAR(10))
+BEGIN
+    SELECT
+        s.registration_no,
+        ROUND(ca.ca_total, 2) AS ca_total
+    FROM CAView ca
+    JOIN Student s ON ca.student_id = s.user_id
+    WHERE ca.course_code = p_course_code
+    ORDER BY s.registration_no;
+END //
+
+DELIMITER ;
+
