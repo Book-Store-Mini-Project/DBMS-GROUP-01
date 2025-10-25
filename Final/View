@@ -457,22 +457,6 @@ WHERE sg.grade NOT IN ('WH', 'MC', 'Ineligible')
 GROUP BY s.registration_no, b.academic_year
 ORDER BY s.registration_no, b.academic_year;
 
-
-
-CREATE OR REPLACE VIEW GPAView AS
-SELECT
-    sg.student_registration,
-    sg.academic_year,
-    sg.semester_name,
-    sg.sgpa,
-    cg.cgpa
-FROM SGPAView sg
-JOIN CGPAView cg 
-    ON sg.student_registration = cg.student_registration
-ORDER BY sg.student_registration, sg.semester_name;
-
-
-
 CREATE OR REPLACE VIEW SGPAView AS
 SELECT
     s.registration_no AS student_registration,
@@ -489,6 +473,20 @@ JOIN Course c ON sg.course_code = c.course_code
 WHERE sg.grade NOT IN ('WH', 'MC', 'Ineligible')
 GROUP BY s.registration_no, b.academic_year, c.semester
 ORDER BY s.registration_no, b.academic_year, c.semester;
+
+
+
+CREATE OR REPLACE VIEW GPAView AS
+SELECT
+    sg.student_registration,
+    sg.academic_year,
+    sg.semester_name,
+    sg.sgpa,
+    cg.cgpa
+FROM SGPAView sg
+JOIN CGPAView cg 
+    ON sg.student_registration = cg.student_registration
+ORDER BY sg.student_registration, sg.semester_name;
 
 
 CREATE OR REPLACE VIEW ExamEligibility AS

@@ -1,0 +1,22 @@
+DELIMITER //
+CREATE PROCEDURE GetBatchAttendanceEligibilityByCourse(IN p_course_code VARCHAR(10))
+BEGIN
+    SELECT
+        s.registration_no,
+        se.date,
+        ROUND((COUNT(CASE WHEN a.status = 'present' THEN 1 END) * 100.0) / COUNT(a.session_id), 2) AS attendance_percentage,
+        CASE 
+            WHEN ROUND((COUNT(CASE WHEN a.status = 'present' THEN 1 END) * 100.0) / COUNT(a.session_id), 2) >= 80 
+            THEN 'Eligible' 
+            ELSE 'Not Eligible' 
+        END AS eligibility_status
+    FROM Attendance a
+    JOIN Session se ON a.session_id = se.session_id
+    JOIN Student s ON a.student_id = s.user_id
+    WHERE se.course_code = p_course_code
+    GROUP BY s.registration_no, se.date
+    ORDER BY s.registration_no, se.date;
+END;
+//
+
+DELIMITER ;
