@@ -10,10 +10,13 @@ BEGIN
             THEN 'Eligible' 
             ELSE 'Not Eligible' 
         END AS eligibility_status
-    FROM Attendance a
-    JOIN Session se ON a.session_id = se.session_id
-    JOIN Student s ON a.student_id = s.user_id
-    WHERE se.course_code = p_course_code
+        FROM Attendance a
+        JOIN Session se ON a.session_id = se.session_id
+        JOIN Student s ON a.student_id = s.user_id
+        
+
+        WHERE se.course_code = p_course_code
+            AND s.status != 'repeat' AND s.status != 'suspended'
     GROUP BY s.registration_no, se.date
     ORDER BY s.registration_no, se.date;
 END;
