@@ -21,43 +21,84 @@ SELECT
                 ) / 100.0 * 10
             )
             +
-            -- (Mid / 100) * 25
             (
-                COALESCE(( 
-                    SELECT m3.mark
-                    FROM Mark m3
-                    JOIN AssessmentComponent ac3 ON m3.assessment_id = ac3.assessment_id
-                    WHERE m3.student_id = sc.student_id
-                      AND ac3.course_code = sc.course_code
-                      AND ac3.name LIKE 'mid%'
-                    LIMIT 1
-                ), 0) / 100.0 * 25
+                CASE WHEN sc.course_code = 'ICT1233' THEN
+                    COALESCE(( 
+                        SELECT m3.mark
+                        FROM Mark m3
+                        JOIN AssessmentComponent ac3 ON m3.assessment_id = ac3.assessment_id
+                        WHERE m3.student_id = sc.student_id
+                          AND ac3.course_code = sc.course_code
+                          AND ac3.name LIKE 'mid%'
+                        LIMIT 1
+                    ), 0) / 100.0 * 15
+                ELSE
+                    COALESCE(( 
+                        SELECT m3.mark
+                        FROM Mark m3
+                        JOIN AssessmentComponent ac3 ON m3.assessment_id = ac3.assessment_id
+                        WHERE m3.student_id = sc.student_id
+                          AND ac3.course_code = sc.course_code
+                          AND ac3.name LIKE 'mid%'
+                        LIMIT 1
+                    ), 0) / 100.0 * 20
+                END
             )
             +
-            -- (Assignment / 100) * 5
+            -- (Assignment / 100) * weight
+            -- Ignore the 5% assignment contribution for ICT1233 (use 0%), otherwise 5%
             (
-                COALESCE(( 
-                    SELECT m4.mark
-                    FROM Mark m4
-                    JOIN AssessmentComponent ac4 ON m4.assessment_id = ac4.assessment_id
-                    WHERE m4.student_id = sc.student_id
-                      AND ac4.course_code = sc.course_code
-                      AND ac4.name LIKE 'assignment%'
-                    LIMIT 1
-                ), 0) / 100.0 * 5
+                CASE WHEN sc.course_code = 'ICT1233' THEN
+                    COALESCE(( 
+                        SELECT m4.mark
+                        FROM Mark m4
+                        JOIN AssessmentComponent ac4 ON m4.assessment_id = ac4.assessment_id
+                        WHERE m4.student_id = sc.student_id
+                          AND ac4.course_code = sc.course_code
+                          AND ac4.name LIKE 'assignment%'
+                        LIMIT 1
+                    ), 0) / 100.0 * 0
+                ELSE
+                    COALESCE(( 
+                        SELECT m4.mark
+                        FROM Mark m4
+                        JOIN AssessmentComponent ac4 ON m4.assessment_id = ac4.assessment_id
+                        WHERE m4.student_id = sc.student_id
+                          AND ac4.course_code = sc.course_code
+                          AND ac4.name LIKE 'assignment%'
+                        LIMIT 1
+                    ), 0) / 100.0 * 5
+                END
             )
             +
-            -- (Project / 100) * 20 (only if it exists)
+            -- (Project / 100) * weight
+            -- Use 15% for ICT1233, otherwise 20%
             (
-                COALESCE((
-                    SELECT m5.mark
-                    FROM Mark m5
-                    JOIN AssessmentComponent ac5 ON m5.assessment_id = ac5.assessment_id
-                    WHERE m5.student_id = sc.student_id
-                      AND ac5.course_code = sc.course_code
-                      AND ac5.name LIKE 'project%'
-                    LIMIT 1
-                ), 0) / 100.0 * 20
+                CASE WHEN sc.course_code = 'ICT1233' THEN
+                    COALESCE(
+                        (
+                            SELECT m5.mark
+                            FROM Mark m5
+                            JOIN AssessmentComponent ac5 ON m5.assessment_id = ac5.assessment_id
+                            WHERE m5.student_id = sc.student_id
+                              AND ac5.course_code = sc.course_code
+                              AND ac5.name LIKE 'project%'
+                            LIMIT 1
+                        ), 0
+                    ) / 100.0 * 10
+                ELSE
+                    COALESCE(
+                        (
+                            SELECT m5.mark
+                            FROM Mark m5
+                            JOIN AssessmentComponent ac5 ON m5.assessment_id = ac5.assessment_id
+                            WHERE m5.student_id = sc.student_id
+                              AND ac5.course_code = sc.course_code
+                              AND ac5.name LIKE 'project%'
+                            LIMIT 1
+                        ), 0
+                    ) / 100.0 * 20
+                END
             )
         ), 2
     ) AS ca_total

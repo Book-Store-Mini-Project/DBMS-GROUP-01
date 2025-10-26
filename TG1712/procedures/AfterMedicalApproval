@@ -4,14 +4,16 @@ CREATE TRIGGER AfterMedicalApproval
 AFTER UPDATE ON Medical
 FOR EACH ROW
 BEGIN
-    IF NEW.approved = 1 AND OLD.approved = 0 THEN
-        UPDATE Attendance a
-        JOIN Session s ON a.session_id = s.session_id
-        JOIN AssessmentComponent ac ON s.course_code = ac.course_code
-        SET a.status = 'present'
-        WHERE a.student_id = NEW.student_id
-          AND a.status = 'absent'
-          AND ac.assessment_id = NEW.assessment_id;
+    -- Run only when approval changes from 0 to 1
+    IF COALESCE(OLD.approved, 0) = 0 AND NEW.approved = 1 THEN
+        
+        -- 1. Update the attendance for that exact session
+        UPDATE Attendance
+        SET status = 'present'
+        WHERE student_id = NEW.student_id
+          AND session_id = NEW.session_id
+          AND status IN ('absent', 'medical');
+          
     END IF;
 END;
 //
