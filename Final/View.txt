@@ -115,20 +115,22 @@ CREATE OR REPLACE VIEW AttendanceSummaryByCourse AS
 SELECT
     s.course_code,
     c.name AS course_name,
-    COUNT(DISTINCT a.student_id) AS total_students,
+    COUNT(DISTINCT e.student_id) AS total_students,  -- from Enrollment
     COUNT(DISTINCT s.session_id) AS total_sessions,
     
     -- Calculate average attendance percentage per course
     ROUND(
-        (SUM(CASE WHEN a.status = 'present' THEN 1 ELSE 0 END) / COUNT(a.status)) * 100,
+        (SUM(CASE WHEN a.status = 'present' THEN 1 ELSE 0 END) / NULLIF(COUNT(a.status),0)) * 100,
         2
     ) AS average_attendance_percentage
 
 FROM Session s
 LEFT JOIN Attendance a ON s.session_id = a.session_id
 LEFT JOIN Course c ON s.course_code = c.course_code
+LEFT JOIN Enrollment e ON s.course_code = e.course_code  -- join with Enrollment table
 GROUP BY s.course_code, c.name
 ORDER BY s.course_code;
+
 
 
 
@@ -533,18 +535,18 @@ SELECT
             FROM StudentGrades sg2
             JOIN Course c2 ON sg2.course_code = c2.course_code
             WHERE sg2.student_registration = s.registration_no
-            AND c2.semester = c.semester
-            AND b.academic_year = sg2.academic_year
-            AND sg2.grade = 'WH'
+              AND c2.semester = c.semester
+              AND b.academic_year = sg2.academic_year
+              AND sg2.grade = 'WH'
         ) THEN 'WH'
         WHEN EXISTS (
             SELECT 1
             FROM StudentGrades sg2
             JOIN Course c2 ON sg2.course_code = c2.course_code
             WHERE sg2.student_registration = s.registration_no
-            AND c2.semester = c.semester
-            AND b.academic_year = sg2.academic_year
-            AND sg2.grade = 'MC'
+              AND c2.semester = c.semester
+              AND b.academic_year = sg2.academic_year
+              AND sg2.grade = 'MC'
         ) THEN 'MC'
         ELSE CAST(ROUND(
             SUM(CASE WHEN sg.grade NOT IN ('WH', 'MC', 'Ineligible') THEN sg.grade_point * c.credits ELSE 0 END) 
@@ -554,25 +556,15 @@ SELECT
         ) AS CHAR)
     END AS sgpa
 FROM StudentGrades sg
-JOIN Student s ON sg.student_registration = s.registration_no
-JOIN Batch b ON s.batch_id = b.batch_id
-JOIN Course c ON sg.course_code = c.course_code
-WHERE sg.student_status NOT IN ('repeat', 'suspend')  -- exclude repeating and suspended students
+JOIN Student s 
+    ON sg.student_registration = s.registration_no
+    AND s.status = 'proper'       
+JOIN Batch b 
+    ON s.batch_id = b.batch_id
+JOIN Course c 
+    ON sg.course_code = c.course_code
 GROUP BY s.registration_no, b.academic_year, c.semester
 ORDER BY s.registration_no, b.academic_year, c.semester;
-
-
-CREATE OR REPLACE VIEW GPAView AS
-SELECT
-    sg.student_registration,
-    sg.academic_year,
-    sg.semester_name,
-    sg.sgpa,
-    cg.cgpa
-FROM SGPAView sg
-JOIN CGPAView cg 
-    ON sg.student_registration = cg.student_registration
-ORDER BY sg.student_registration, sg.semester_name;
 
 
 CREATE OR REPLACE VIEW ExamEligibility AS
@@ -582,10 +574,8 @@ SELECT
     fm.course_code,
     c.name AS course_name,
     
-    
-    ROUND(ca.ca_total,2) AS ca_marks,
-    
-    
+    ROUND(ca.ca_total, 2) AS ca_marks,
+
     CASE
         WHEN s.status = 'repeat' AND ca.ca_total >= 20 THEN 'Eligible'
         WHEN s.status = 'suspended' THEN 'InEligible'
@@ -598,14 +588,57 @@ JOIN User u ON s.user_id = u.user_id
 JOIN final_mark fm ON fm.registration_no = s.registration_no
 JOIN Course c ON fm.course_code = c.course_code
 
-
-LEFT JOIN eligibleattendanceview a
+-- Only include students who have attendance recorded
+JOIN eligibleattendanceview a
     ON a.course_code = fm.course_code
    AND a.registration_no = s.registration_no
 
-
-LEFT JOIN CAView ca
+JOIN CAView ca
     ON ca.course_code = fm.course_code
    AND ca.student_id = s.user_id
 
 ORDER BY s.registration_no, fm.course_code;
+
+
+
+CREATE OR REPLACE VIEW ShowFinalResultsView AS
+SELECT
+    s.registration_no,
+    c.course_code,
+    c.name AS course_name,
+
+    -- Marks
+    ROUND(COALESCE(ca.ca_total, 0), 2) AS CA_Mark,
+    ROUND(COALESCE(em.end_total, 0), 2) AS End_Mark,
+    ROUND(COALESCE(att.attendance_percentage, 0), 2) AS Attendance_Percentage,
+
+    -- Final mark from studentgrades
+    COALESCE(sg.final_total, ROUND(COALESCE(ca.ca_total, 0)*0.4 + COALESCE(em.end_total,0)*0.6, 2)) AS Final_Mark,
+
+    -- Eligibility Status
+    CASE
+        WHEN s.status = 'suspended' THEN 'Suspended'
+        WHEN att.attendance_percentage < 80 THEN 'Attendance Fail'
+        WHEN ca.ca_total < 20 THEN 'CA Fail'
+        WHEN COALESCE(em.end_total, 0) < 20 THEN 'End Fail'
+        ELSE 'Eligible'
+    END AS Eligibility_Status,
+
+    -- Grade and Grade Point from studentgrades
+    sg.grade AS Final_Grade,
+    sg.grade_point AS Grade_Point
+
+FROM Student s
+INNER JOIN CAView ca 
+    ON s.user_id = ca.student_id           -- Only students with CA marks (enrolled)
+LEFT JOIN EndMarkView em 
+    ON s.user_id = em.student_id AND ca.course_code = em.course_code
+LEFT JOIN EligibleAttendanceView att 
+    ON s.registration_no = att.registration_no AND ca.course_code = att.course_code
+LEFT JOIN studentgrades sg
+    ON s.registration_no = sg.student_registration
+   AND ca.course_code = sg.course_code
+LEFT JOIN Course c
+    ON ca.course_code = c.course_code
+
+ORDER BY s.registration_no, c.course_code;

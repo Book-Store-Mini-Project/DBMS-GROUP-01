@@ -5,10 +5,8 @@ SELECT
     fm.course_code,
     c.name AS course_name,
     
-    
-    ROUND(ca.ca_total,2) AS ca_marks,
-    
-    
+    ROUND(ca.ca_total, 2) AS ca_marks,
+
     CASE
         WHEN s.status = 'repeat' AND ca.ca_total >= 20 THEN 'Eligible'
         WHEN s.status = 'suspended' THEN 'InEligible'
@@ -21,13 +19,12 @@ JOIN User u ON s.user_id = u.user_id
 JOIN final_mark fm ON fm.registration_no = s.registration_no
 JOIN Course c ON fm.course_code = c.course_code
 
-
-LEFT JOIN eligibleattendanceview a
+-- Only include students who have attendance recorded
+JOIN eligibleattendanceview a
     ON a.course_code = fm.course_code
    AND a.registration_no = s.registration_no
 
-
-LEFT JOIN CAView ca
+JOIN CAView ca
     ON ca.course_code = fm.course_code
    AND ca.student_id = s.user_id
 
