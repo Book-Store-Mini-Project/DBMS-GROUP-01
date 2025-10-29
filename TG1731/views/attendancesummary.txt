@@ -1,23 +1,18 @@
 CREATE OR REPLACE VIEW AttendanceSummaryByCourse AS
 SELECT
-    t.course_code,
-    COUNT(DISTINCT t.student_id) AS students_with_any_attendance,
+    s.course_code,
+    c.name AS course_name,
+    COUNT(DISTINCT a.student_id) AS total_students,
+    COUNT(DISTINCT s.session_id) AS total_sessions,
+    
+    -- Calculate average attendance percentage per course
     ROUND(
-        AVG((t.SUM_CASE_PRESENT / NULLIF(t.SUM_CASE_TOTAL, 0)) * 100),
+        (SUM(CASE WHEN a.status = 'present' THEN 1 ELSE 0 END) / COUNT(a.status)) * 100,
         2
-    ) AS average_attendance_percentage,
-    MAX(t.total_sessions) AS total_sessions
-FROM (
-    SELECT
-        a.student_id,
-        se.course_code,
-        COUNT(DISTINCT se.session_id) AS total_sessions,
-        SUM(CASE WHEN a.status = 'present' THEN se.duration ELSE 0 END) AS SUM_CASE_PRESENT,
-        SUM(se.duration) AS SUM_CASE_TOTAL
-    FROM Session se
-    LEFT JOIN Attendance a
-        ON se.session_id = a.session_id
-    GROUP BY a.student_id, se.course_code
-) AS t
-GROUP BY t.course_code
-ORDER BY t.course_code;
+    ) AS average_attendance_percentage
+
+FROM Session s
+LEFT JOIN Attendance a ON s.session_id = a.session_id
+LEFT JOIN Course c ON s.course_code = c.course_code
+GROUP BY s.course_code, c.name
+ORDER BY s.course_code;
