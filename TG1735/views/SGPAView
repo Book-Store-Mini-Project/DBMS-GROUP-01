@@ -9,18 +9,18 @@ SELECT
             FROM StudentGrades sg2
             JOIN Course c2 ON sg2.course_code = c2.course_code
             WHERE sg2.student_registration = s.registration_no
-            AND c2.semester = c.semester
-            AND b.academic_year = sg2.academic_year
-            AND sg2.grade = 'WH'
+              AND c2.semester = c.semester
+              AND b.academic_year = sg2.academic_year
+              AND sg2.grade = 'WH'
         ) THEN 'WH'
         WHEN EXISTS (
             SELECT 1
             FROM StudentGrades sg2
             JOIN Course c2 ON sg2.course_code = c2.course_code
             WHERE sg2.student_registration = s.registration_no
-            AND c2.semester = c.semester
-            AND b.academic_year = sg2.academic_year
-            AND sg2.grade = 'MC'
+              AND c2.semester = c.semester
+              AND b.academic_year = sg2.academic_year
+              AND sg2.grade = 'MC'
         ) THEN 'MC'
         ELSE CAST(ROUND(
             SUM(CASE WHEN sg.grade NOT IN ('WH', 'MC', 'Ineligible') THEN sg.grade_point * c.credits ELSE 0 END) 
@@ -30,9 +30,12 @@ SELECT
         ) AS CHAR)
     END AS sgpa
 FROM StudentGrades sg
-JOIN Student s ON sg.student_registration = s.registration_no
-JOIN Batch b ON s.batch_id = b.batch_id
-JOIN Course c ON sg.course_code = c.course_code
-WHERE sg.student_status NOT IN ('repeat', 'suspended')  
+JOIN Student s 
+    ON sg.student_registration = s.registration_no
+    AND s.status = 'proper'       
+JOIN Batch b 
+    ON s.batch_id = b.batch_id
+JOIN Course c 
+    ON sg.course_code = c.course_code
 GROUP BY s.registration_no, b.academic_year, c.semester
 ORDER BY s.registration_no, b.academic_year, c.semester;

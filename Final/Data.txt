@@ -606,72 +606,6 @@ INSERT INTO Enrollment (student_id, course_code, enroll_date) VALUES
 (13, 'TMS1233', '2025-08-04');
 
 
-
-INSERT INTO AssessmentComponent (course_code, name, mark, is_ca)
-VALUES
--- ENG1212 - English
-('ENG1212', 'mid', 100, TRUE),
-('ENG1212', 'assignment', 100, TRUE),
-('ENG1212', 'end_theory', 100, FALSE),
-
--- TCS1212 - Management
-('TCS1212', 'quiz 01', 100, TRUE),
-('TCS1212', 'quiz 02', 100, TRUE),
-('TCS1212', 'quiz 03', 100, TRUE),
-('TCS1212', 'assignment', 100, TRUE),
-('TCS1212', 'mid', 100, TRUE),
-('TCS1212', 'end_theory', 100, FALSE),
-
--- ICT1212 - Database Management Systems
-('ICT1212', 'quiz 01', 100, TRUE),
-('ICT1212', 'quiz 02', 100, TRUE),
-('ICT1212', 'quiz 03', 100, TRUE),
-('ICT1212', 'assignment', 100, TRUE),
-('ICT1212', 'mid', 100, TRUE),
-('ICT1212', 'end_theory', 100, FALSE),
-
--- ICT1222 - Database Management Systems Practicum
-('ICT1222', 'mid', 100, TRUE),
-('ICT1222', 'project', 100, TRUE),
-('ICT1222', 'end_practical', 100, FALSE),
-
--- TMS1233 - Discrete Mathematics
-('TMS1233', 'quiz 01', 100, TRUE),
-('TMS1233', 'quiz 02', 100, TRUE),
-('TMS1233', 'quiz 03', 100, TRUE),
-('TMS1233', 'mid', 100, TRUE),
-('TMS1233', 'assignment', 100, TRUE),
-('TMS1233', 'end_theory', 100, FALSE),
-
--- ICT1233 - Computer Networks 
-('ICT1253', 'quiz 01', 100, TRUE),
-('ICT1253', 'quiz 02', 100, TRUE),
-('ICT1253', 'quiz 03', 100, TRUE),
-('ICT1253', 'assignment', 100, TRUE),
-('ICT1253', 'mid', 100, TRUE),
-('ICT1253', 'end_theory', 100, FALSE),
-('ICT1253', 'end_practical', 100, FALSE),
-
--- ICT1242 - Computer Architecture
-('ICT1242', 'quiz 01', 100, TRUE),
-('ICT1242', 'quiz 02', 100, TRUE),
-('ICT1242', 'quiz 03', 100, TRUE),
-('ICT1242', 'assignment', 100, TRUE),
-('ICT1242', 'mid', 100, TRUE),
-('ICT1242', 'end_theory', 100, FALSE),
-
--- ICT1233 - Server-Side Web Development
-('ICT1233', 'quiz 01', 100, TRUE),
-('ICT1233', 'quiz 02', 100, TRUE),
-('ICT1233', 'quiz 03', 100, TRUE),
-('ICT1233', 'project', 100, TRUE),
-('ICT1233', 'assignment', 100, TRUE),
-('ICT1233', 'mid', 100, TRUE),
-('ICT1233', 'end_theory', 100, FALSE),
-('ICT1233', 'end_practical', 100, FALSE);
-
-
-
 INSERT INTO Attendance (student_id, session_id, status) VALUES
 -- Student 1 (100% attendance: 165 present, 0 medical, 0 absent)
 (1, 1, 'present'), (1, 2, 'present'), (1, 3, 'present'), (1, 4, 'present'),
@@ -1102,27 +1036,5 @@ INSERT INTO Attendance (student_id, session_id, status) VALUES
 (10, 153, 'present'), (10, 154, 'present'), (10, 155, 'present'), (10, 156, 'present'),
 (10, 157, 'present'), (10, 158, 'present'), (10, 159, 'present'), (10, 160, 'present'),
 (10, 161, 'present'), (10, 162, 'present'), (10, 163, 'present'), (10, 164, 'present'),
-(10, 165, 'present'),
--- Repeat Students [unchanged]
-(11, 4, 'present'),  -- TCS1212 quiz 01
-(11, 5, 'present'),  -- TCS1212 quiz 02
-(11, 6, 'present'),  -- TCS1212 quiz 03
-(11, 7, 'present'),  -- TCS1212 assignment
-(11, 8, 'present'),  -- TCS1212 mid
-(11, 16, 'present'), -- ICT1222 mid
-(11, 17, 'present'), -- ICT1222 project
-(11, 18, 'present'), -- ICT1222 end_practical
-(13, 19, 'present'), -- TMS1233 quiz 01
-(13, 20, 'present'), -- TMS1233 quiz 02
-(13, 21, 'present'), -- TMS1233 quiz 03
-(12, 41, 'present'), -- ICT1233 project
-(12, 42, 'present'), -- ICT1233 assignment
-(12, 43, 'present'), -- ICT1233 mid
-(12, 44, 'present'), -- ICT1233 end_theory
-(12, 45, 'present'), -- ICT1233 end_practical
-(13, 22, 'present'), -- TMS1233 mid
-(13, 23, 'present'), -- TMS1233 assignment
-(13, 24, 'present'), -- TMS1233 end_theory
-(13, 25, 'present'), -- ICT1253 quiz 01
-(13, 26, 'present'), -- ICT1253 quiz 02
-(13, 27, 'present'); -- ICT1253 quiz 03
+(10, 165, 'present');
+

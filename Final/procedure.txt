@@ -54,24 +54,32 @@ DELIMITER ;
 DELIMITER //
 
 CREATE PROCEDURE GetAttendanceByCourseAndType(
-    IN p_course_code VARCHAR(10),
-    IN p_type VARCHAR(10) 
+    IN courseCode VARCHAR(10),
+    IN sessionType VARCHAR(10)
 )
 BEGIN
     SELECT
         s.registration_no,
         se.course_code,
-        ROUND(SUM(CASE WHEN a.status='present' THEN se.duration ELSE 0 END)/SUM(se.duration)*100, 2) AS attendance_percentage
+        se.type AS session_type,
+        ROUND(
+            SUM(CASE WHEN a.status = 'present' THEN se.duration ELSE 0 END)
+            / SUM(se.duration) * 100, 2
+        ) AS attendance_percentage
     FROM Attendance a
     JOIN Session se ON a.session_id = se.session_id
     JOIN Student s ON a.student_id = s.user_id
-    WHERE se.course_code = p_course_code
-      AND (p_type='both' OR se.type = p_type)
-    GROUP BY s.registration_no, se.course_code
-    ORDER BY s.registration_no;
+    WHERE se.course_code = courseCode
+      AND (
+          sessionType = 'both'
+          OR se.type = sessionType
+      )
+    GROUP BY s.registration_no, se.course_code, se.type
+    ORDER BY s.registration_no, se.type;
 END //
 
 DELIMITER ;
+
 
 DELIMITER //
 
