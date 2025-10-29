@@ -5,40 +5,23 @@ SELECT
     
     CASE
         WHEN s.status = 'suspended' THEN 0
-        WHEN es.eligibility_status = 'Eligible' 
-             AND COALESCE(e.end_total, 0) = 0 THEN 0   
-        WHEN es.eligibility_status != 'Eligible'
-             AND (c.ca_total < 20 OR a.attendance_percentage < 80) THEN 0  
-        WHEN es.eligibility_status = 'Eligible' 
-        THEN ROUND(COALESCE(c.ca_total, 0) + COALESCE(e.end_total, 0), 2)
-        ELSE 0
+        ELSE ROUND(COALESCE(c.ca_total, 0) + COALESCE(e.end_total, 0), 2)
     END AS final_total,
 
+    
     CASE
         WHEN s.status = 'suspended' THEN 'Suspended'
-        WHEN es.eligibility_status <> 'Eligible' THEN
-            CASE
-                WHEN c.ca_total < 20 THEN 'CA Fail'
-                WHEN a.attendance_percentage < 80 THEN 'Attendance Fail'
-                ELSE 'Not Eligible'
-            END
-        WHEN es.eligibility_status = 'Eligible' 
-             AND COALESCE(e.end_total, 0) = 0 THEN 'End Fail'
+        WHEN s.status = 'repeat' THEN 'Repeat'
+        WHEN COALESCE(c.ca_total, 0) < 20 THEN 'CA Fail'
+        WHEN COALESCE(e.end_total, 0) = 0 THEN 'End Fail'
         ELSE 'Eligible'
     END AS reason
 
 FROM CAView c
+JOIN Student s 
+    ON c.student_id = s.user_id
 LEFT JOIN EndMarkView e 
     ON c.student_id = e.student_id
    AND c.course_code = e.course_code
-LEFT JOIN EligibleStudentsView es 
-    ON c.student_id = es.student_id 
-   AND es.course_code = c.course_code
-LEFT JOIN EligibleAttendanceView a
-    ON a.course_code = c.course_code
-   AND a.registration_no = (
-        SELECT s2.registration_no FROM Student s2 WHERE s2.user_id = c.student_id
-   )
-JOIN Student s 
-    ON c.student_id = s.user_id
+
 ORDER BY s.registration_no, c.course_code;
