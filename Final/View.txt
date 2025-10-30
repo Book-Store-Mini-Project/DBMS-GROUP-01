@@ -642,3 +642,16 @@ LEFT JOIN Course c
     ON ca.course_code = c.course_code
 
 ORDER BY s.registration_no, c.course_code;
+
+
+CREATE OR REPLACE VIEW GPAView AS
+SELECT
+    sg.student_registration,
+    sg.academic_year,
+    sg.semester_name,
+    sg.sgpa,
+    cg.cgpa
+FROM SGPAView sg
+JOIN CGPAView cg 
+    ON sg.student_registration = cg.student_registration
+ORDER BY sg.student_registration, sg.semester_name;
